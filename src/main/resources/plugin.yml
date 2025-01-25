@@ -1,0 +1,48 @@
+name: ZLOBBY
+version: '1.0-SNAPSHOT'
+main: com.john4096.zLOBBY.ZLOBBY
+api-version: '1.21'
+authors: [ JohnRichard4096 ]
+description: Plugin for ZCRAFT ONLY
+
+commands:
+  zlobby:
+    description: "ZCRAFT Lobby plugin main command"
+    usage: /<command> <subcommand>
+    aliases: [zlo,zl,ZLOBBY]
+    permission: "zlobby.main"
+    permission-message: "You have no permission to use this command!"
+
+  zlobby.reload:
+    description: "Reload the config file"
+    usage: /<command> reload
+    permission: "zlobby.main.reload"
+    permission-message: "You have no permission to use this command!"
+
+  zlobby.info:
+    description: "Get ZLobby info"
+    usage: /<command> info
+    permission: "zlobby.main.info"
+    permission-message: "You have no permission to use this command!"
+
+permissions:
+  zlobby.main:
+    description: "Allow to use /<command> (not all sub command)"
+    default: true
+    children:
+      zlobby.main.info: true
+  zlobby.*:
+    description: "Allow to use all commands"
+    children:
+      zlobby.main.reload: true
+      zlobby.main.info: true
+      zlobby.main.info.more: true
+  zlobby.main.reload:
+    description: "Allow to reload ZLobby"
+    default: op
+  zlobby.main.info:
+    description: "Allow to get ZLobby info"
+    default: true
+  zlobby.main.info.more:
+    description: "Allow to get more ZLobby info"
+    default: op

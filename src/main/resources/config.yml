@@ -1,0 +1,50 @@
+# 插件配置
+Main:
+  # 是否启用调试选项
+  debug: false
+#当玩家进入服务器时的传送位置/掉入虚空时传送到安全位置
+teleportLocation:
+  # 是否启用
+  enable: false
+  # 传送位置
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  # 朝向
+  yaw: 0.0
+  pitch: 0.0
+# 当玩家加入时的其他事项
+onPlayerJoin:
+  # 是否启用玩家加入时的处理
+  enable: false
+  # 在玩家加入游戏时改变的游戏模式
+  changeGameMode:
+    # 是否启用
+    enable: false
+    # 游戏模式，可写：survival, creative, adventure, spectator
+    gameMode: "adventure"
+  # 欢迎消息
+  welcomeMessage:
+    # 是否启用
+    enable: false
+    # 服务器名称
+    serverName: "服务器"
+    # 消息（支持使用&来表示颜色，变量{player}表示玩家，{server}表示服务器名称）
+    message: "欢迎{player}来到{server}"
+Lobby:
+  # 是否启用
+  enable: false
+  # 玩家进入游戏时传送到哪个世界
+  world: "world"
+  # 是否防止玩家破坏方块
+  avoidBlockBreak: true
+  # 是否防止玩家放置方块
+  avoidBlockPlace: true
+  # 是否在玩家多次尝试操作方块时踢出
+  toKick: true
+  # 玩家尝试操作方块的次数
+  tryTimes: 5
+  # 是否取消玩家被伤害
+  cancelHurt: true
+  # 是否给玩家补充满饥饿值与血量
+  feedPlayer: true
