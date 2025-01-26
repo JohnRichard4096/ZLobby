@@ -68,7 +68,7 @@ public class EventListener  implements Listener {
                 welcomeMessage = welcomeMessage.replace("{player}", event.getPlayer().getName());
             }
             if(welcomeMessage.contains("{server}")){
-                welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJohn.welcomeMessage.serverName"));
+                welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
             }
             if (welcomeMessage.contains("&")){
                 welcomeMessage = welcomeMessage.replace("&", "§");
