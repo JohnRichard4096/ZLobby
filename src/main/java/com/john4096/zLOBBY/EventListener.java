@@ -44,9 +44,11 @@ public class EventListener  implements Listener {
         logger.info("Player " + event.getPlayer().getName() + " joined the server");
         try {
             if (config.getBoolean("teleportLocation.enable")) {
-                logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
-                event.getPlayer().teleport(TPL);
-                player.setRespawnLocation(TPL);
+                if(!player.hasPermission("zlobby.tp.skip")){
+                    logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
+                    event.getPlayer().teleport(TPL);
+                    player.setRespawnLocation(TPL);
+                }
             }
         }catch (Exception e){
             logger.warning("Teleportation failed!");
@@ -62,7 +64,16 @@ public class EventListener  implements Listener {
                 logger.warning("Welcome message is null, please check your config.yml!");
                 throw new NullPointerException("onPlayerJoin.welcomeMessage.message is null!But it was enabled!");
             }
-            event.getPlayer().sendMessage(welcomeMessage.replace("&", "§").replace("{player}", event.getPlayer().getName()).replace("{server}",config.getString("welcomeMessage.serverName")));
+            if(welcomeMessage.contains("{player}")){
+                welcomeMessage = welcomeMessage.replace("{player}", event.getPlayer().getName());
+            }
+            if(welcomeMessage.contains("{server}")){
+                welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJohn.welcomeMessage.serverName"));
+            }
+            if (welcomeMessage.contains("&")){
+                welcomeMessage = welcomeMessage.replace("&", "§");
+            }
+            event.getPlayer().sendMessage(welcomeMessage);
         }
         }catch (Exception e){
             logger.log(Level.WARNING,"Welcome message failed!");
@@ -82,11 +93,16 @@ public class EventListener  implements Listener {
         try{
             if (config.getBoolean("onPlayerJoin.feedPlayer")) {
                 logger.info("Feeding player " + event.getPlayer().getName());
-                event.getPlayer().setFoodLevel(20);
-                event.getPlayer().setSaturation(20);
-                player.setArrowsInBody(0);
-                player.setFoodLevel(20);
-                player.setHealth(20);
+                if(!player.hasPermission("zlobby.feed.skip")){
+                    event.getPlayer().setFoodLevel(20);
+                    event.getPlayer().setSaturation(20);
+                }
+                if (!player.hasPermission("zlobby.health.skip")){
+                    player.setArrowsInBody(0);
+                    player.setFoodLevel(20);
+                    player.setHealth(20);
+                }
+
 
             }
         }catch (Exception e){
@@ -111,7 +127,9 @@ public class EventListener  implements Listener {
             return;
         }
         if(config.getBoolean("Lobby.avoidBlockBreak")){
+            if(player.hasPermission(" zlobby.lobby.break"))return;
             if (event.getPlayer().getGameMode() != GameMode.CREATIVE && !event.getPlayer().isOp()) {
+                player.sendMessage(ChatColor.RED + "You can't break blocks.");
                 logger.warning("Player " + player.getName() + " tried to break block on " + event.getBlock().getLocation());
                     if (config.getBoolean("Lobby.toKick")) {
                         int attemptCount = getOrIncrementAttemptCount(player.getName());
@@ -119,12 +137,11 @@ public class EventListener  implements Listener {
                         if (attemptCount >= tried_times) {
                             kickPlayer(player, "tried to break blocks for " + tried_times + " times");
                             logger.warning("Player " + player.getName() + " was kicked because tried to break block too many times!");
-                            return;
+
                         }
                     }
-                    player.sendMessage(ChatColor.RED + "You can't break blocks.");
+                event.setCancelled(true);
 
-                    event.setCancelled(true);
             }
         }
 
@@ -139,18 +156,19 @@ public class EventListener  implements Listener {
             return;
         }
         if (config.getBoolean("Lobby.avoidBlockPlace")){
+            if(player.hasPermission(" zlobby.lobby.place"))return;
             if (event.getPlayer().getGameMode() != GameMode.CREATIVE && !event.getPlayer().isOp()) {
                 logger.warning("Player " + player.getName() + " tried to place block on " + event.getBlock().getLocation());
+                player.sendMessage(ChatColor.RED + "You can't place blocks.");
                 if (config.getBoolean("Lobby.toKick")) {
                     int attemptCount = getOrIncrementAttemptCount(player.getName());
                     int tried_times = config.getInt("Lobby.tryTimes");
-                    if (attemptCount >= tried_times) {
+                    if (attemptCount >= tried_times && !player.hasPermission("zlobby.lobby.neverKick")) {
                         kickPlayer(player, "tried to place blocks for " + tried_times + " times");
                         logger.warning("Player " + player.getName() + " was kicked because tried to place block too many times!");
-                        return;
+
                     }
                 }
-                player.sendMessage(ChatColor.RED + "You can't place blocks.");
                 event.setCancelled(true);
             }
         }
@@ -167,9 +185,11 @@ public class EventListener  implements Listener {
         this.TPL = loadTPLocation();
         if (location.getY() < minHeight) {
             if (player.getGameMode() == GameMode.CREATIVE)return;
-
-            logger.warning("Player " + player.getName() + " fell into the void!");
-            if (config.getBoolean("teleportLocation")){
+            if (player.hasPermission("zlobby.tp.skip")){
+                return;
+            }
+            if (config.getBoolean("teleportLocation.enable")){
+                logger.warning("Player " + player.getName() + " fell into the void!");
                 player.sendMessage(ChatColor.GOLD+"You will be sent to a safe place.");
                 player.playSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
                 player.teleport(TPL);
@@ -187,10 +207,20 @@ public class EventListener  implements Listener {
             return;
         }
         if (config.getBoolean("Lobby.cancelHurt")){
-            player.setArrowsInBody(0);
-            player.setFoodLevel(20);
-            player.setHealth(20);
-            event.setCancelled(true);
+            if(!player.hasPermission("zlobby.health.skip")){
+                player.setArrowsInBody(0);
+                player.setHealth(20);
+                event.setCancelled(true);
+            }
+
+        }
+        if (config.getBoolean("Lobby.feedPlayer")){
+            if (!player.hasPermission("zlobby.feed.skip")) {
+                player.setFoodLevel(20);
+                player.setSaturation(20);
+            }
+
+
         }
     }
     @NotNull

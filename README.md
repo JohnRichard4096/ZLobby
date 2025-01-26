@@ -18,20 +18,26 @@ ZLOBBY 是一个专为**群组服务器**设计的 Minecraft 插件，旨在提�
 
 ## 插件内容
 ### 命令
-| 命令 | 描述 | 权限 |
-| --- | --- | --- |
-| `/zlobby` | 主命令，显示插件信息 | `zlobby.main` |
-| `/zlobby reload` | 重新加载配置文件 | `zlobby.main.reload` |
-| `/zlobby info` | 显示插件详细信息 | `zlobby.main.info`子节点`zlobby.main.info.more`拥有可获取更多信息 |
+| 命令               | 描述         | 权限                                                    |
+|------------------|------------|-------------------------------------------------------|
+| `/zlobby`        | 主命令，显示插件信息 | `zlobby.main`                                         |
+| `/zlobby reload` | 重新加载配置文件   | `zlobby.main.reload`                                  |
+| `/zlobby info`   | 显示插件详细信息   | `zlobby.main.info`子节点`zlobby.main.info.more`拥有可获取更多信息 |
 
 ### 权限
-| 权限 | 描述 | 默认值 |
-| --- | --- | --- |
-| `zlobby.main` | 允许使用主命令（不包括所有子命令） | `true` |
-| `zlobby.*` | 允许使用所有命令 | `op` |
-| `zlobby.main.reload` | 允许重新加载插件配置 | `op` |
-| `zlobby.main.info` | 允许获取插件信息 | `true` |
-| `zlobby.main.info.more` | 允许获取更多插件信息 | `op` |
+| 权限                        | 描述                    | 默认谁拥有  |
+|---------------------------|-----------------------|--------|
+| `zlobby.main`             | 允许使用主命令（不包括所有子命令）     | `默认拥有` |
+| `zlobby.*`                | 允许使用所有命令              | `op`   |
+| `zlobby.main.reload`      | 允许重新加载插件配置            | `op`   |
+| `zlobby.main.info`        | 允许获取插件信息              | `默认拥有` |
+| `zlobby.main.info.more`   | 允许获取更多插件信息            | `op`   |
+| `zlobby.lobby.neverKick`  | 不会踢出这个玩家              | `都不拥有` |
+| `zlobby.lobby.place`      | 允许放置方块                | `都不拥有` |
+| `zlobby.lobby.break`      | 允许放置方块                | `都不拥有` |
+| `zlobby.feed.skip`        | 跳过这个玩家的饱食度与饱和度回复      | `都不拥有` |
+| `zlobby.health.skip`      | 跳过这个玩家的血量回复           | `都不拥有` |
+| `zlobby.lobby.changeMode` | 改变这个玩家的模式（配置文件权重覆盖节点） | `默认拥有` |
 
 ## 插件配置文件
 插件配置文件位于 `config.yml`，您可以根据需要进行修改。
