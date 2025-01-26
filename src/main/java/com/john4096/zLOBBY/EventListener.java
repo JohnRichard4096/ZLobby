@@ -1,12 +1,12 @@
 package com.john4096.zLOBBY;
 import org.bukkit.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import  org.bukkit.event.block.BlockBreakEvent;
 import  org.bukkit.event.block.BlockPlaceEvent;
@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -85,6 +86,87 @@ public class EventListener  implements Listener {
             logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
             event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
         }
+        }catch (Exception e){
+            logger.log(Level.WARNING,"Change game mode failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+        try{
+            if (config.getBoolean("onPlayerJoin.feedPlayer")) {
+                logger.info("Feeding player " + event.getPlayer().getName());
+                if(!player.hasPermission("zlobby.feed.skip")){
+                    event.getPlayer().setFoodLevel(20);
+                    event.getPlayer().setSaturation(20);
+                }
+                if (!player.hasPermission("zlobby.health.skip")){
+                    player.setArrowsInBody(0);
+                    player.setFoodLevel(20);
+                    player.setHealth(20);
+                }
+
+
+            }
+        }catch (Exception e){
+            logger.log(Level.WARNING,"Feed player failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event){
+        Player player = event.getPlayer();
+        this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
+        this.TPL = loadTPLocation();
+        boolean enable = config.getBoolean("onPlayerJoin.enable");
+
+
+        if (!enable){
+            return;
+        }
+        logger.info("Player " + event.getPlayer().getName() + " respawn in the server.");
+        try {
+            if (config.getBoolean("teleportLocation.enable")) {
+                if(!player.hasPermission("zlobby.tp.skip")){
+                    logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
+                    event.getPlayer().teleport(TPL);
+                    player.setRespawnLocation(TPL);
+                }
+            }
+        }catch (Exception e){
+            logger.warning("Teleportation failed!");
+            logger.log(Level.WARNING,"Teleport player"+ event.getPlayer().getName()+"to"+TPL.toString()+"failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+        try{
+            if (config.getBoolean("onPlayerJoin.welcomeMessage.enable")) {
+                logger.info("Sending welcome message to player " + event.getPlayer().getName());
+                String welcomeMessage = config.getString("onPlayerJoin.welcomeMessage.message");
+                if (welcomeMessage == null) {
+                    logger.warning("Welcome message is null, please check your config.yml!");
+                    throw new NullPointerException("onPlayerJoin.welcomeMessage.message is null!But it was enabled!");
+                }
+                if(welcomeMessage.contains("{player}")){
+                    welcomeMessage = welcomeMessage.replace("{player}", event.getPlayer().getName());
+                }
+                if(welcomeMessage.contains("{server}")){
+                    welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
+                }
+                if (welcomeMessage.contains("&")){
+                    welcomeMessage = welcomeMessage.replace("&", "§");
+                }
+                event.getPlayer().sendMessage(welcomeMessage);
+            }
+        }catch (Exception e){
+            logger.log(Level.WARNING,"Welcome message failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+        try{
+            if (config.getBoolean("onPlayerJoin.changeGameMode.enable")) {
+                logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
+                event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
+            }
         }catch (Exception e){
             logger.log(Level.WARNING,"Change game mode failed!");
             logger.log(Level.WARNING,"Exception:"+e.getMessage());
@@ -198,10 +280,15 @@ public class EventListener  implements Listener {
         }
     }
     @EventHandler
-    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+    public void onPlayerDamage(EntityDamageEvent event) {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
-        Player player = (Player) event.getEntity();
-
+        Player player;
+        try {
+             player = (Player) event.getEntity();
+        }catch (ClassCastException e){
+            return;
+        }
+        if(event.getCause() == EntityDamageEvent.DamageCause.KILL)return;
         boolean enable = config.getBoolean("Lobby.enable");
         if (!enable){
             return;
