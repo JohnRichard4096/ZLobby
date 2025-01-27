@@ -36,7 +36,7 @@ public final class Executor implements CommandExecutor {
                 sender.sendMessage(info);
                 if (sender.hasPermission("zlobby.main.info.more")){
                     Configuration config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
-                    boolean debug = config.getBoolean("Main.debug");
+
                     boolean lobbyEnable = config.getBoolean("Lobby.enable");
                     String lobbyWorld = config.getString("Lobby.world");
                     boolean lobbyAvoidBlockBreak = config.getBoolean("Lobby.avoidBlockBreak");
@@ -53,8 +53,6 @@ public final class Executor implements CommandExecutor {
                     String onPlayerJoinWelcomeMessageMessage = config.getString("onPlayerJoin.welcomeMessage.message");
                     boolean tpEnable = config.getBoolean("teleportLocation.enable");
 
-
-                    sender.sendMessage(ChatColor.GREEN+"Debug: "+ChatColor.GOLD+debug);
                     sender.sendMessage(ChatColor.GREEN+"teleport location on player join: "+ChatColor.GOLD+tpEnable);
                     if (tpEnable){
                         double tpX = config.getDouble("teleportLocation.x");

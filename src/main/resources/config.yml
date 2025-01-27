@@ -1,7 +1,4 @@
 # 插件配置
-Main:
-  # 是否启用调试选项
-  debug: false
 #当玩家进入服务器时的传送位置/掉入虚空时传送到安全位置
 teleportLocation:
   # 是否启用

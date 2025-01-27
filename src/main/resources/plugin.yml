@@ -1,7 +1,7 @@
 name: ZLOBBY
-version: '1.1.2-SNAPSHOT'
+version: '1.2-SNAPSHOT'
 main: com.john4096.zLOBBY.ZLOBBY
-api-version: '1.21'
+api-version: '1.17'
 authors: [ JohnRichard4096 ]
 description: Plugin for ZCRAFT ONLY
 
@@ -37,6 +37,17 @@ permissions:
       zlobby.main.reload: true
       zlobby.main.info: true
       zlobby.main.info.more: true
+    default: false
+  zlobby.*:
+    description: "Own all permissions"
+    children:
+      zlobby.main: true
+      zlobby.main.*: true
+      zlobby.lobby.changeMode: true
+      zlobby.lobby.break: true
+      zlobby.lobby.place: true
+    default: false
+
   zlobby.main.reload:
     description: "Allow to reload ZLobby"
     default: op
@@ -46,24 +57,35 @@ permissions:
   zlobby.main.info.more:
     description: "Allow to get more ZLobby info"
     default: op
-  zlobby.lobby.changeMode:
-    description: "Change player's mode"
-    default: true
+  zlobby.lobby.*:
+    description: "Give all admin-like permission in ZLobby"
+    children:
+      zlobby.lobby.noChangeMode: true
+      zlpobby.lobby.break: true
+      zlobby.lobby.place: true
+      zlobby.lobby.neverKick: true
+      zlobby.lobby.tp: false
+      zlobby.lobby.feed: true
+      zlobby.lobby.health: true
+    default: false
+  zlobby.lobby.noChangeMode:
+    description: "Not change player's mode"
+    default: false
   zlobby.lobby.break:
     description: "Allow to break block"
-    default: false
+    default: op
   zlobby.lobby.place:
     description: "Allow to place block"
-    default: false
+    default: op
   zlobby.lobby.neverKick:
     description: "Never kick this player"
     default: false
-  zlobby.tp.skip:
-    description: "Not tp this player"
-    default: false
-  zlobby.feed.skip:
-    description: "Not feed this player"
-    default: false
-  zlobby.health.skip:
-    description: "Not heal HP with this player"
-    default: false
+  zlobby.tp:
+    description: "Could tp this player"
+    default: true
+  zlobby.feed:
+    description: "Could feed this player"
+    default: true
+  zlobby.health:
+    description: "Could heal HP with this player"
+    default: true

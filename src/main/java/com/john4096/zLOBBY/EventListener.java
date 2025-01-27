@@ -6,6 +6,8 @@ import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import  org.bukkit.event.block.BlockBreakEvent;
@@ -45,10 +47,11 @@ public class EventListener  implements Listener {
         logger.info("Player " + event.getPlayer().getName() + " joined the server");
         try {
             if (config.getBoolean("teleportLocation.enable")) {
-                if(!player.hasPermission("zlobby.tp.skip")){
+                if(player.hasPermission("zlobby.lobby.tp")){
                     logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
                     event.getPlayer().teleport(TPL);
-                    player.setRespawnLocation(TPL);
+                    TPL.getWorld().setSpawnLocation(TPL);
+
                 }
             }
         }catch (Exception e){
@@ -83,8 +86,11 @@ public class EventListener  implements Listener {
         }
         try{
         if (config.getBoolean("onPlayerJoin.changeGameMode.enable")) {
-            logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
-            event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
+            if (!player.hasPermission("zlobby.lobby.noChangeMode")){
+                logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
+                event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
+            }
+
         }
         }catch (Exception e){
             logger.log(Level.WARNING,"Change game mode failed!");
@@ -94,11 +100,11 @@ public class EventListener  implements Listener {
         try{
             if (config.getBoolean("onPlayerJoin.feedPlayer")) {
                 logger.info("Feeding player " + event.getPlayer().getName());
-                if(!player.hasPermission("zlobby.feed.skip")){
+                if(player.hasPermission("zlobby.lobby.feed")){
                     event.getPlayer().setFoodLevel(20);
                     event.getPlayer().setSaturation(20);
                 }
-                if (!player.hasPermission("zlobby.health.skip")){
+                if (player.hasPermission("zlobby.lobby.health")){
                     player.setArrowsInBody(0);
                     player.setFoodLevel(20);
                     player.setHealth(20);
@@ -126,10 +132,10 @@ public class EventListener  implements Listener {
         logger.info("Player " + event.getPlayer().getName() + " respawn in the server.");
         try {
             if (config.getBoolean("teleportLocation.enable")) {
-                if(!player.hasPermission("zlobby.tp.skip")){
+                if(player.hasPermission("zlobby.lobby.tp")){
                     logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
                     event.getPlayer().teleport(TPL);
-                    player.setRespawnLocation(TPL);
+                    TPL.getWorld().setSpawnLocation(TPL);
                 }
             }
         }catch (Exception e){
@@ -163,7 +169,7 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-            if (config.getBoolean("onPlayerJoin.changeGameMode.enable")) {
+            if (config.getBoolean("onPlayerJoin.changeGameMode.enable")&&!player.hasPermission("zlobby.lobby.noChangeMode")) {
                 logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
                 event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
             }
@@ -175,11 +181,11 @@ public class EventListener  implements Listener {
         try{
             if (config.getBoolean("onPlayerJoin.feedPlayer")) {
                 logger.info("Feeding player " + event.getPlayer().getName());
-                if(!player.hasPermission("zlobby.feed.skip")){
+                if(player.hasPermission("zlobby.lobby.feed")){
                     event.getPlayer().setFoodLevel(20);
                     event.getPlayer().setSaturation(20);
                 }
-                if (!player.hasPermission("zlobby.health.skip")){
+                if (player.hasPermission("zlobby.lobby.health")){
                     player.setArrowsInBody(0);
                     player.setFoodLevel(20);
                     player.setHealth(20);
@@ -267,13 +273,13 @@ public class EventListener  implements Listener {
         this.TPL = loadTPLocation();
         if (location.getY() < minHeight) {
             if (player.getGameMode() == GameMode.CREATIVE)return;
-            if (player.hasPermission("zlobby.tp.skip")){
+            if (!player.hasPermission("zlobby.lobby.tp")){
                 return;
             }
             if (config.getBoolean("teleportLocation.enable")){
                 logger.warning("Player " + player.getName() + " fell into the void!");
                 player.sendMessage(ChatColor.GOLD+"You will be sent to a safe place.");
-                player.playSound(player, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1f);
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
                 player.teleport(TPL);
             }
 
@@ -288,13 +294,13 @@ public class EventListener  implements Listener {
         }catch (ClassCastException e){
             return;
         }
-        if(event.getCause() == EntityDamageEvent.DamageCause.KILL)return;
+        if(!(event instanceof EntityDamageByEntityEvent)&&!(event instanceof EntityDamageByBlockEvent))return;
         boolean enable = config.getBoolean("Lobby.enable");
         if (!enable){
             return;
         }
         if (config.getBoolean("Lobby.cancelHurt")){
-            if(!player.hasPermission("zlobby.health.skip")){
+            if(player.hasPermission("zlobby.lobby.health")){
                 player.setArrowsInBody(0);
                 player.setHealth(20);
                 event.setCancelled(true);
@@ -302,7 +308,7 @@ public class EventListener  implements Listener {
 
         }
         if (config.getBoolean("Lobby.feedPlayer")){
-            if (!player.hasPermission("zlobby.feed.skip")) {
+            if (player.hasPermission("zlobby.lobby.feed")) {
                 player.setFoodLevel(20);
                 player.setSaturation(20);
             }
