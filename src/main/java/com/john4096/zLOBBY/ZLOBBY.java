@@ -38,6 +38,9 @@ public final class ZLOBBY extends JavaPlugin {
         logger.info("Loading listener class......");
         Bukkit.getPluginCommand("zlobby").setExecutor(new Executor());
         Bukkit.getPluginCommand("zlobby").setTabCompleter(new CommandTabCompleter());
+        logger.info("Loading BStats......");
+        int pluginId =  24574;
+        Metrics metrics = new Metrics(this, pluginId);
 
         logger.info("Loaded!");
     }
