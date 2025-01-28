@@ -1,5 +1,6 @@
 # 玩家加入功能的扩展，可使用&表示颜色；变量{player}表示玩家，{server}表示config.yml的服务器名称
 onJoin:
+
   title:
     # 是否启用标题
     enable: false

@@ -11,11 +11,11 @@ import java.util.logging.Logger;
 
 
 public final class ZLOBBY extends JavaPlugin {
-
+    public boolean Debug = false;
     private final Logger logger = getLogger();
     private final String version = "0.1";
     public FileConfiguration config;
-    public FileConfiguration onJoinConfig;
+    public YamlConfiguration onJoinConfig;
     private File onJoinFile = new File(getDataFolder(), "onJoin.yml");
     @Override
     public void onEnable() {
@@ -49,7 +49,7 @@ public final class ZLOBBY extends JavaPlugin {
         // Plugin shutdown logic
         logger.info("Unloaded!");
     }
-    public FileConfiguration getOnJoinConfig(){
+    public YamlConfiguration getOnJoinConfig(){
         if (this.onJoinConfig==null){
             reloadConfig();
         }

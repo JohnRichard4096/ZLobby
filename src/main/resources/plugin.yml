@@ -1,5 +1,5 @@
 name: ZLOBBY
-version: '1.3-Dev-SNAPSHOT'
+version: '1.3-Dev2-SNAPSHOT'
 main: com.john4096.zLOBBY.ZLOBBY
 api-version: '1.17'
 authors: [ JohnRichard4096 ]
@@ -37,14 +37,18 @@ permissions:
       zlobby.main.reload: true
       zlobby.main.info: true
       zlobby.main.info.more: true
+      zlobby.main.debugger: true
     default: false
+  zlobby.main.debugger:
+    description: "Allow to use /<command> debugger"
+    default: op
   zlobby.*:
-    description: "Own all permissions"
+    description: "Own all permissions(We don't suppose you to let ANY player to own this permission!!!)"
     children:
       zlobby.main: true
       zlobby.main.*: true
-      zlobby.lobby.*: true
       zlobby.effect: true
+      zlobby.lobby.*: true
     default: false
 
   zlobby.main.reload:
@@ -56,39 +60,42 @@ permissions:
   zlobby.main.info.more:
     description: "Allow to get more ZLobby info"
     default: op
+
   zlobby.lobby.*:
-    description: "Give all admin-like permission in ZLobby"
+    description: "Give this player all permission even including some special permissions!"
     children:
-      zlobby.lobby.noChangeMode: true
-      zlobby.lobby.break: true
-      zlobby.lobby.place: true
-      zlobby.lobby.neverKick: true
       zlobby.lobby.tp: false
       zlobby.lobby.feed: true
       zlobby.lobby.health: true
-
+      zlobby.lobby.break: true
+      zlobby.lobby.place: true
+      zlobby.lobby.noChangeMode: true
+      zlobby.lobby.neverKick: true
     default: false
   zlobby.lobby.noChangeMode:
-    description: "Not change player's mode"
+    description: "Do not change this player's game mode by this plugin."
     default: false
+  zlobby.lobby.tp:
+    description: "Allow to teleport this player to safe place"
+    default: true
+  zlobby.lobby.feed:
+    description: "Allow to feed this player"
+    default: true
+  zlobby.lobby.health:
+    description: "Allow to heal this player"
+    default: true
   zlobby.lobby.break:
-    description: "Allow to break block"
-    default: op
-  zlobby.lobby.place:
-    description: "Allow to place block"
-    default: op
-  zlobby.lobby.neverKick:
-    description: "Never kick this player"
+    description: "Allow to break blocks in lobby"
     default: false
-  zlobby.tp:
-    description: "Could tp this player"
-    default: true
-  zlobby.feed:
-    description: "Could feed this player"
-    default: true
-  zlobby.health:
-    description: "Could heal HP with this player"
-    default: true
+  zlobby.lobby.place:
+    description: "Allow to place blocks in lobby"
+    default: false
   zlobby.effect:
-    description: "Could generate fireworks/sound/title on player join"
+    description: "Allow to spawn fireworks/title/subtitle/sound to this player."
+    default: true
+  zlobby.lobby.neverKick:
+    description: "Do not kick this player when he/she try to break blocks in lobby."
+    default: false
+  zlobby.lobby.message:
+    description: "Player will receive welcome messages."
     default: true

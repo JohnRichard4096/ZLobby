@@ -70,6 +70,7 @@ Java版本要求:
 | `zlobby.lobby.tp`           | 允许传送到指定位置              | `默认`   |
 | `zlobby.lobby.feed`         | 允许喂饱玩家                 | `默认`   |
 | `zlobby.lobby.health`       | 允许治疗玩家生命值              | `默认`   |
+| `zlobby.lobby.message`      | 玩家会收到欢迎消息              | `默认`   |
 | `zlobby.effect`             | 当玩家加入时是否产生配置文件设置好的视觉效果 | `默认`   |
 
 </details>

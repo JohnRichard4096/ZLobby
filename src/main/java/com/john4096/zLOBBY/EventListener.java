@@ -22,11 +22,12 @@ import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 
 public class EventListener  implements Listener {
-
+    private boolean Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
     private final Logger logger = ZLOBBY.getPlugin(ZLOBBY.class).getLogger();
     private Location TPL;
     private FileConfiguration config;
@@ -43,7 +44,9 @@ public class EventListener  implements Listener {
         Player player = event.getPlayer();
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.TPL = loadTPLocation();
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         boolean enable = config.getBoolean("onPlayerJoin.enable");
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Location location = player.getLocation();
 
         if (!enable){
@@ -51,13 +54,13 @@ public class EventListener  implements Listener {
         }
         logger.info("Player " + event.getPlayer().getName() + " joined the server");
         try {
-            if (config.getBoolean("teleportLocation.enable")) {
-                if(player.hasPermission("zlobby.lobby.tp")){
+            if (config.getBoolean("teleportLocation.enable")&&player.hasPermission("zlobby.lobby.tp")) {
+
                     logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
                     event.getPlayer().teleport(TPL);
                     TPL.getWorld().setSpawnLocation(TPL);
 
-                }
+
             }
         }catch (Exception e){
             logger.warning("Teleportation failed!");
@@ -66,22 +69,29 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-        if (config.getBoolean("onPlayerJoin.welcomeMessage.enable")) {
+        if (config.getBoolean("onPlayerJoin.welcomeMessage.enable")&&player.hasPermission("zlobby.message")) {
             logger.info("Sending welcome message to player " + event.getPlayer().getName());
             String welcomeMessage = config.getString("onPlayerJoin.welcomeMessage.message");
+            if(Debug){
+                logger.info("welcome message:"+welcomeMessage);
+            }
             if (welcomeMessage == null) {
                 logger.warning("Welcome message is null, please check your config.yml!");
                 throw new NullPointerException("onPlayerJoin.welcomeMessage.message is null!But it was enabled!");
             }
             if(welcomeMessage.contains("{player}")){
+                if(Debug) logger.info("Welcome message contains {player}");
                 welcomeMessage = welcomeMessage.replace("{player}", event.getPlayer().getName());
             }
             if(welcomeMessage.contains("{server}")){
+                if(Debug) logger.info("Welcome message contains {server}");
                 welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
             }
             if (welcomeMessage.contains("&")){
+                if(Debug) logger.info("Welcome message contains &");
                 welcomeMessage = welcomeMessage.replace("&", "§");
             }
+            if (Debug)logger.info("Welcome message-finish:"+welcomeMessage);
             event.getPlayer().sendMessage(welcomeMessage);
         }
         }catch (Exception e){
@@ -90,11 +100,11 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-        if (config.getBoolean("onPlayerJoin.changeGameMode.enable")) {
-            if (!player.hasPermission("zlobby.lobby.noChangeMode")){
+        if (config.getBoolean("onPlayerJoin.changeGameMode.enable")&&!player.hasPermission("zlobby.lobby.noChangeMode")) {
+
                 logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
                 event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
-            }
+
 
         }
         }catch (Exception e){
@@ -103,17 +113,17 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-            if (config.getBoolean("onPlayerJoin.feedPlayer")) {
+            if (config.getBoolean("Lobby.feedPlayer")&&player.hasPermission("zlobby.lobby.feed")) {
                 logger.info("Feeding player " + event.getPlayer().getName());
-                if(player.hasPermission("zlobby.lobby.feed")){
+
                     event.getPlayer().setFoodLevel(20);
                     event.getPlayer().setSaturation(20);
-                }
-                if (player.hasPermission("zlobby.lobby.health")){
+
+
                     player.setArrowsInBody(0);
                     player.setFoodLevel(20);
                     player.setHealth(20);
-                }
+
 
 
             }
@@ -123,7 +133,7 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-            if (onJoinConfig.getBoolean("onJoin.title.enable") && player.hasPermission("zlobby.effect")){
+            if (onJoinConfig.getBoolean("onJoin.title.enable")&&player.hasPermission("zlobby.lobby.effect")){
                 logger.info("Sending title to player " + event.getPlayer().getName());
                 String title = onJoinConfig.getString("onJoin.title.title");
                 String subtitle = onJoinConfig.getString("onJoin.title.subtitle");
@@ -149,7 +159,18 @@ public class EventListener  implements Listener {
                 if (subtitle.contains("&")){
                     subtitle = subtitle.replace("&", "§");
                 }
-                event.getPlayer().sendTitle(title, subtitle, 0, onJoinConfig.getInt("onJoin.title.time"), 0);
+                final String finalTitle = title;
+                final String finalSubtitle = subtitle;
+                if (Debug){
+                    logger.info("Title:"+finalTitle+"Subtitle:"+finalSubtitle);
+                }
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        event.getPlayer().sendTitle(finalTitle, finalSubtitle, 10, onJoinConfig.getInt("onJoin.title.time"), 10);
+                    }
+                }.runTaskLater(ZLOBBY.getPlugin(ZLOBBY.class), 20L);
+
 
             }
         }catch (Exception e){
@@ -158,11 +179,17 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-            if (onJoinConfig.getBoolean("onJoin.playSound.enable") && player.hasPermission("zlobby.effect")){
+            if (onJoinConfig.getBoolean("onJoin.playSound.enable")&&player.hasPermission("zlobby.lobby.effect")){
                 logger.info("Sending sound to player " + event.getPlayer().getName());
-                for (String sound : onJoinConfig.getStringList("onJoin.playSound.sound")){
-                    event.getPlayer().playSound(event.getPlayer().getLocation(),sound , 1, 1);
-                }
+                new BukkitRunnable(){
+                    @Override
+                    public void run(){
+                        for (String sound : onJoinConfig.getStringList("onJoin.playSound.sound")){
+                            event.getPlayer().playSound(event.getPlayer().getLocation(),sound , 1, 1);
+                        }
+                    }
+                }.runTaskLater(ZLOBBY.getPlugin(ZLOBBY.class), 10L);
+
             }
         }catch (Exception e){
             logger.log(Level.WARNING,"Sound send failed!");
@@ -170,35 +197,40 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-            if (onJoinConfig.getBoolean("onJoin.firework.enable") && player.hasPermission("zlobby.effect")){
+            if (onJoinConfig.getBoolean("onJoin.firework.enable")&&player.hasPermission("zlobby.lobby.effect")){
                 logger.info("Sending firework to player " + event.getPlayer().getName());
-                List<Map<?, ?>> fireworks = onJoinConfig.getMapList("onJoin.firework.fireworks");
-                for (Map<?, ?> fireworkConfig : fireworks) {
-                    String typeStr = (String) fireworkConfig.get("type");
-                    String colorStr = (String) fireworkConfig.get("color");
-                    int power = (int) fireworkConfig.get("power");
+                final List<Map<?, ?>> fireworks = onJoinConfig.getMapList("onJoin.firework.fireworks");
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        for (Map<?, ?> fireworkConfig : fireworks) {
+                            String typeStr = (String) fireworkConfig.get("type");
+                            String colorStr = (String) fireworkConfig.get("color");
+                            int power = (int) fireworkConfig.get("power");
 
-                    FireworkEffect.Type type = FireworkEffect.Type.valueOf(typeStr);
-                    Color color;
-                    try {
-                        DyeColor dyeColor = DyeColor.valueOf(colorStr.toUpperCase(Locale.ROOT));
-                        color = dyeColor.getColor();
-                    } catch (IllegalArgumentException e) {
-                        logger.warning("Invalid color name: " + colorStr);
-                        continue; // skip this firework
+                            FireworkEffect.Type type = FireworkEffect.Type.valueOf(typeStr);
+                            Color color;
+                            try {
+                                DyeColor dyeColor = DyeColor.valueOf(colorStr.toUpperCase(Locale.ROOT));
+                                color = dyeColor.getColor();
+                            } catch (IllegalArgumentException e) {
+                                logger.warning("Invalid color name: " + colorStr);
+                                continue; // skip this firework
+                            }
+
+                            FireworkEffect effect = FireworkEffect.builder()
+                                    .with(type)
+                                    .withColor(color)
+                                    .build();
+
+                            Firework firework = location.getWorld().spawn(location, Firework.class);
+                            FireworkMeta meta = firework.getFireworkMeta();
+                            meta.addEffect(effect);
+                            meta.setPower(power);
+                            firework.setFireworkMeta(meta);
+                        }
                     }
-
-                    FireworkEffect effect = FireworkEffect.builder()
-                            .with(type)
-                            .withColor(color)
-                            .build();
-
-                    Firework firework = location.getWorld().spawn(location, Firework.class);
-                    FireworkMeta meta = firework.getFireworkMeta();
-                    meta.addEffect(effect);
-                    meta.setPower(power);
-                    firework.setFireworkMeta(meta);
-                }
+                }.runTaskLater(ZLOBBY.getPlugin(ZLOBBY.class), 10L);
             }
         }catch (Exception e){
             logger.log(Level.WARNING,"Firework send failed!");
@@ -212,19 +244,20 @@ public class EventListener  implements Listener {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.TPL = loadTPLocation();
         boolean enable = config.getBoolean("onPlayerJoin.enable");
-
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
 
         if (!enable){
             return;
         }
         logger.info("Player " + event.getPlayer().getName() + " respawn in the server.");
         try {
-            if (config.getBoolean("teleportLocation.enable")) {
-                if(player.hasPermission("zlobby.lobby.tp")){
+            if (config.getBoolean("teleportLocation.enable")&&player.hasPermission("zlobby.lobby.tp")) {
+
                     logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
+
                     event.getPlayer().teleport(TPL);
                     TPL.getWorld().setSpawnLocation(TPL);
-                }
+
             }
         }catch (Exception e){
             logger.warning("Teleportation failed!");
@@ -232,30 +265,7 @@ public class EventListener  implements Listener {
             logger.log(Level.WARNING,"Exception:"+e.getMessage());
             e.printStackTrace();
         }
-        try{
-            if (config.getBoolean("onPlayerJoin.welcomeMessage.enable")) {
-                logger.info("Sending welcome message to player " + event.getPlayer().getName());
-                String welcomeMessage = config.getString("onPlayerJoin.welcomeMessage.message");
-                if (welcomeMessage == null) {
-                    logger.warning("Welcome message is null, please check your config.yml!");
-                    throw new NullPointerException("onPlayerJoin.welcomeMessage.message is null!But it was enabled!");
-                }
-                if(welcomeMessage.contains("{player}")){
-                    welcomeMessage = welcomeMessage.replace("{player}", event.getPlayer().getName());
-                }
-                if(welcomeMessage.contains("{server}")){
-                    welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
-                }
-                if (welcomeMessage.contains("&")){
-                    welcomeMessage = welcomeMessage.replace("&", "§");
-                }
-                event.getPlayer().sendMessage(welcomeMessage);
-            }
-        }catch (Exception e){
-            logger.log(Level.WARNING,"Welcome message failed!");
-            logger.log(Level.WARNING,"Exception:"+e.getMessage());
-            e.printStackTrace();
-        }
+
         try{
             if (config.getBoolean("onPlayerJoin.changeGameMode.enable")&&!player.hasPermission("zlobby.lobby.noChangeMode")) {
                 logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
@@ -267,19 +277,13 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
         try{
-            if (config.getBoolean("onPlayerJoin.feedPlayer")) {
+            if (config.getBoolean("Lobby.feedPlayer")&&player.hasPermission("zlobby.lobby.feed")) {
                 logger.info("Feeding player " + event.getPlayer().getName());
-                if(player.hasPermission("zlobby.lobby.feed")){
                     event.getPlayer().setFoodLevel(20);
                     event.getPlayer().setSaturation(20);
-                }
-                if (player.hasPermission("zlobby.lobby.health")){
                     player.setArrowsInBody(0);
                     player.setFoodLevel(20);
                     player.setHealth(20);
-                }
-
-
             }
         }catch (Exception e){
             logger.log(Level.WARNING,"Feed player failed!");
@@ -287,24 +291,18 @@ public class EventListener  implements Listener {
             e.printStackTrace();
         }
     }
-    private void kickPlayer(Player player, String reason) {
-
-        player.kickPlayer(ChatColor.RED + "You were been kicked with reason " + reason);
-        logger.warning("Player " + player.getName() + " has been kicked for " + reason);
-        playerAttemptCounts.remove(player.getName()); // 移除玩家的尝试次数记录
-    }
-
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         Player player = event.getPlayer();
         boolean enable = config.getBoolean("Lobby.enable");
         if (!enable){
             return;
         }
-        if(config.getBoolean("Lobby.avoidBlockBreak")){
-            if(player.hasPermission(" zlobby.lobby.break"))return;
-            if (event.getPlayer().getGameMode() != GameMode.CREATIVE && !event.getPlayer().isOp()) {
+        if(config.getBoolean("Lobby.avoidBlockBreak")&&!player.hasPermission("zlobby.lobby.break")){
+
+            if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
                 player.sendMessage(ChatColor.RED + "You can't break blocks.");
                 logger.warning("Player " + player.getName() + " tried to break block on " + event.getBlock().getLocation());
                     if (config.getBoolean("Lobby.toKick")) {
@@ -320,26 +318,29 @@ public class EventListener  implements Listener {
 
             }
         }
-
-
     }
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Player player = event.getPlayer();
         boolean enable = config.getBoolean("Lobby.enable");
         if (!enable){
             return;
         }
-        if (config.getBoolean("Lobby.avoidBlockPlace")){
-            if(player.hasPermission(" zlobby.lobby.place"))return;
-            if (event.getPlayer().getGameMode() != GameMode.CREATIVE && !event.getPlayer().isOp()) {
+        if (config.getBoolean("Lobby.avoidBlockPlace")&&!player.hasPermission("zlobby.lobby.place")){
+
+            if (event.getPlayer().getGameMode() != GameMode.CREATIVE) {
                 logger.warning("Player " + player.getName() + " tried to place block on " + event.getBlock().getLocation());
                 player.sendMessage(ChatColor.RED + "You can't place blocks.");
-                if (config.getBoolean("Lobby.toKick")) {
+                if (config.getBoolean("Lobby.toKick")&&!player.hasPermission("zlobby.lobby.neverKick")) {
                     int attemptCount = getOrIncrementAttemptCount(player.getName());
                     int tried_times = config.getInt("Lobby.tryTimes");
-                    if (attemptCount >= tried_times && !player.hasPermission("zlobby.lobby.neverKick")) {
+                    if (Debug){
+                        logger.info("Player "+player.getName()+" tried to place block for "+attemptCount+" times.");
+                        logger.info("Attempt count: "+attemptCount);
+                    }
+                    if (attemptCount >= tried_times) {
                         kickPlayer(player, "tried to place blocks for " + tried_times + " times");
                         logger.warning("Player " + player.getName() + " was kicked because tried to place block too many times!");
 
@@ -349,11 +350,9 @@ public class EventListener  implements Listener {
             }
         }
     }
-    private int getOrIncrementAttemptCount(String playerName) {
-        return playerAttemptCounts.compute(playerName, (name, count) -> count == null ? 1 : count + 1);
-    }
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Player player = event.getPlayer();
         Location location = player.getLocation();
         World world = player.getWorld();
@@ -361,10 +360,7 @@ public class EventListener  implements Listener {
         this.TPL = loadTPLocation();
         if (location.getY() < minHeight) {
             if (player.getGameMode() == GameMode.CREATIVE)return;
-            if (!player.hasPermission("zlobby.lobby.tp")){
-                return;
-            }
-            if (config.getBoolean("teleportLocation.enable")){
+            if (config.getBoolean("teleportLocation.enable")&&player.hasPermission("zlobby.lobby.tp")){
                 logger.warning("Player " + player.getName() + " fell into the void!");
                 player.sendMessage(ChatColor.GOLD+"You will be sent to a safe place.");
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
@@ -375,6 +371,7 @@ public class EventListener  implements Listener {
     }
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         Player player;
         try {
@@ -382,24 +379,32 @@ public class EventListener  implements Listener {
         }catch (ClassCastException e){
             return;
         }
-        if(!(event instanceof EntityDamageByEntityEvent)&&!(event instanceof EntityDamageByBlockEvent))return;
+        if (Debug){
+            logger.info("Player '"+player.getName()+"' was hurt by "+event.getCause());
+            logger.info("Value"+event.getDamage());
+        }
+        if(!(event instanceof EntityDamageByEntityEvent)&&!(event instanceof EntityDamageByBlockEvent)){
+            if(!(event.getCause() == EntityDamageEvent.DamageCause.VOID)&&!(event.getCause() == EntityDamageEvent.DamageCause.FALL)&&!(event.getCause() == EntityDamageEvent.DamageCause.DROWNING)){
+                if(Debug)logger.info("Player was hurt by command");
+                return;
+            }
+        }
         boolean enable = config.getBoolean("Lobby.enable");
         if (!enable){
             return;
         }
-        if (config.getBoolean("Lobby.cancelHurt")){
-            if(player.hasPermission("zlobby.lobby.health")){
+        if (config.getBoolean("Lobby.cancelHurt")&&player.hasPermission("zlobby.lobby.health")){
                 player.setArrowsInBody(0);
                 player.setHealth(20);
                 event.setCancelled(true);
-            }
+
 
         }
-        if (config.getBoolean("Lobby.feedPlayer")){
-            if (player.hasPermission("zlobby.lobby.feed")) {
+        if (config.getBoolean("Lobby.feedPlayer")&&player.hasPermission("zlobby.lobby.feed")){
+
                 player.setFoodLevel(20);
                 player.setSaturation(20);
-            }
+
 
 
         }
@@ -413,5 +418,14 @@ public class EventListener  implements Listener {
         float yaw = (float) config.getDouble("teleportLocation.yaw");
         float pitch = (float) config.getDouble("teleportLocation.pitch");
         return new Location(Bukkit.getWorlds().getFirst(), x, y, z, yaw, pitch);
+    }
+    private void kickPlayer(Player player, String reason) {
+
+        player.kickPlayer(ChatColor.RED + "You were been kicked with reason " + reason);
+        logger.warning("Player " + player.getName() + " has been kicked for " + reason);
+        playerAttemptCounts.remove(player.getName()); // 移除玩家的尝试次数记录
+    }
+    private int getOrIncrementAttemptCount(String playerName) {
+        return playerAttemptCounts.compute(playerName, (name, count) -> count == null ? 1 : count + 1);
     }
 }

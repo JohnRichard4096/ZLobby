@@ -5,10 +5,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 
 public final class Executor implements CommandExecutor {
+    YamlConfiguration onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getName().equalsIgnoreCase("zlobby")){
@@ -22,7 +25,7 @@ public final class Executor implements CommandExecutor {
                 sender.sendMessage(info);
                 return true;
             }
-            if (args[0].equals("reload")){
+            else if (args[0].equals("reload")){
                 if (!sender.hasPermission("zlobby.main.reload")){
                     sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
                     return true;
@@ -39,7 +42,6 @@ public final class Executor implements CommandExecutor {
                     Configuration config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
 
                     boolean lobbyEnable = config.getBoolean("Lobby.enable");
-                    String lobbyWorld = config.getString("Lobby.world");
                     boolean lobbyAvoidBlockBreak = config.getBoolean("Lobby.avoidBlockBreak");
                     boolean lobbyAvoidBlockPlace = config.getBoolean("Lobby.avoidBlockPlace");
                     boolean lobbyToKick = config.getBoolean("Lobby.toKick");
@@ -48,26 +50,17 @@ public final class Executor implements CommandExecutor {
                     boolean lobbyFeedPlayer = config.getBoolean("Lobby.feedPlayer");
                     boolean onPlayerJoinEnable = config.getBoolean("onPlayerJoin.enable");
                     boolean onPlayerJoinChangeGameMode = config.getBoolean("onPlayerJoin.changeGameMode.enable");
-                    String onPlayerJoinChangeGameModeGameMode = config.getString("onPlayerJoin.changeGameMode.gameMode");
                     boolean onPlayerJoinWelcomeMessageEnable = config.getBoolean("onPlayerJoin.welcomeMessage.enable");
-                    String onPlayerJoinWelcomeMessageServerName = config.getString("onPlayerJoin.welcomeMessage.serverName");
-                    String onPlayerJoinWelcomeMessageMessage = config.getString("onPlayerJoin.welcomeMessage.message");
                     boolean tpEnable = config.getBoolean("teleportLocation.enable");
+                    boolean titleEnable = onJoinConfig.getBoolean("onJoin.title.enable");
+                    boolean playSoundEnable = onJoinConfig.getBoolean("onJoin.playSound.enable");
+                    boolean fireWorkEnable = onJoinConfig.getBoolean("onJoin.firework.enable");
+
 
                     sender.sendMessage(ChatColor.GREEN+"teleport location on player join: "+ChatColor.GOLD+tpEnable);
-                    if (tpEnable){
-                        double tpX = config.getDouble("teleportLocation.x");
-                        double tpY = config.getDouble("teleportLocation.y");
-                        double tpZ = config.getDouble("teleportLocation.z");
-                        double tpYaw = config.getDouble("teleportLocation.yaw");
-                        double tpPitch = config.getDouble("teleportLocation.pitch");
-                        sender.sendMessage(ChatColor.GREEN+"teleport location: "+ChatColor.GOLD+tpX+","+tpY+","+tpZ+"\n"+ChatColor.GREEN+"pitch,yaw" +ChatColor.GOLD+ tpPitch+","+tpYaw);
-
-                    }
 
                     sender.sendMessage(ChatColor.GREEN+"enable Lobby function: "+ChatColor.GOLD+lobbyEnable);
                     if (lobbyEnable){
-                        sender.sendMessage(ChatColor.GREEN+"Lobby World: "+ChatColor.GOLD+lobbyWorld);
                         sender.sendMessage(ChatColor.GREEN+"Lobby Avoid Block Break: "+ChatColor.GOLD+lobbyAvoidBlockBreak);
                         sender.sendMessage(ChatColor.GREEN+"Lobby Avoid Block Place: "+ChatColor.GOLD+lobbyAvoidBlockPlace);
                         sender.sendMessage(ChatColor.GREEN+"kick player if too many times: "+ChatColor.GOLD+lobbyToKick);
@@ -78,21 +71,49 @@ public final class Executor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN+"onPlayerJoin: "+ChatColor.GOLD+onPlayerJoinEnable);
                     if (onPlayerJoinEnable){
                         sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Change GameMode: "+ChatColor.GOLD+onPlayerJoinChangeGameMode);
-                        if (onPlayerJoinChangeGameMode){
-                            sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Change GameMode GameMode: "+ChatColor.GOLD+onPlayerJoinChangeGameModeGameMode);
-                        }
-                        sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Welcome Message: "+ChatColor.GOLD+onPlayerJoinWelcomeMessageEnable);
-                        if (onPlayerJoinWelcomeMessageEnable){
-                            sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Welcome Message Server Name: "+ChatColor.GOLD+onPlayerJoinWelcomeMessageServerName);
-                            sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Welcome Message Message: "+ChatColor.GOLD+onPlayerJoinWelcomeMessageMessage);
-                        }
-                    }
 
+                        sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Welcome Message: "+ChatColor.GOLD+onPlayerJoinWelcomeMessageEnable);
+                    }
+                    sender.sendMessage(ChatColor.GREEN+"Title enable: "+ChatColor.GOLD+titleEnable);
+                    sender.sendMessage(ChatColor.GREEN+"PlaySound enable: "+ChatColor.GOLD+playSoundEnable);
+                    sender.sendMessage(ChatColor.GREEN+"FireWorks enable: "+ChatColor.GOLD+fireWorkEnable);
                     return true;
 
                 }
                 return true;
-            }else return false;
+            } else if (args[0].equals("debugger")) {
+                if (sender instanceof Player){
+                    Player player = (Player) sender;
+                    if (!player.hasPermission("zlobby.main.debugger")){
+                        sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
+                        return true;
+                    }
+                }
+                if(!(args.length>=2)){
+                    sender.sendMessage(ChatColor.RED+"Please use /zlobby debugger on/off");
+                    return true;
+                }
+                if (args[1].equals("on")) {
+                    if (!ZLOBBY.getPlugin(ZLOBBY.class).Debug){
+                        ZLOBBY.getPlugin(ZLOBBY.class).Debug = true;
+                        sender.sendMessage(ChatColor.GREEN+"Debugger is now setting on");
+                    }else{
+                        sender.sendMessage(ChatColor.RED+"Debugger is already on");
+                    }
+                    return true;
+                } else if (args[1].equals("off")) {
+                    if (ZLOBBY.getPlugin(ZLOBBY.class).Debug){
+                        ZLOBBY.getPlugin(ZLOBBY.class).Debug = false;
+                        sender.sendMessage(ChatColor.GREEN+"Debugger is now setting off");
+
+                    }else{
+                        sender.sendMessage(ChatColor.RED+"Debugger is already off");
+                    }
+                    return true;
+
+                }else return false;
+
+            } else return false;
         }
         return false;
     }
