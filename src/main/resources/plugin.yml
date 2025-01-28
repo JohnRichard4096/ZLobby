@@ -1,5 +1,5 @@
 name: ZLOBBY
-version: '1.2-SNAPSHOT'
+version: '1.2.1-Dev-SNAPSHOT'
 main: com.john4096.zLOBBY.ZLOBBY
 api-version: '1.17'
 authors: [ JohnRichard4096 ]
@@ -61,7 +61,7 @@ permissions:
     description: "Give all admin-like permission in ZLobby"
     children:
       zlobby.lobby.noChangeMode: true
-      zlpobby.lobby.break: true
+      zlobby.lobby.break: true
       zlobby.lobby.place: true
       zlobby.lobby.neverKick: true
       zlobby.lobby.tp: false
