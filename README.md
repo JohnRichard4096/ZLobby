@@ -51,6 +51,9 @@ Java版本要求:
 | `/zlobby info`   | 显示插件详细信息   | `zlobby.main.info`子节点`zlobby.main.info.more`拥有可获取更多信息 |
 
 ### 权限
+
+<details><summary>查看详情</summary>
+
 | 权限节点                        | 描述                     | 默认值    |
 |-----------------------------|------------------------|--------|
 | `zlobby.main`               | 允许使用部分命令（不是所有子命令）      | `默认`   |
@@ -69,7 +72,9 @@ Java版本要求:
 | `zlobby.lobby.health`       | 允许治疗玩家生命值              | `默认`   |
 | `zlobby.effect`             | 当玩家加入时是否产生配置文件设置好的视觉效果 | `默认`   |
 
-#### 特别说明
+</details>
+
+#### **特别说明**
 | 权限节点            | 描述         | 默认值   |
 |-----------------|------------|-------|
 | `zlobby.tp`     | 允许传送到指定位置  | `非OP` |
@@ -189,7 +194,7 @@ A: 使用命令 `/zlobby info`，需要 `zlobby.main.info.more` 权限。
 A: 在 `config.yml` 文件中配置 `teleportLocation` 部分，将 `enable` 设置为 `true`，并填写相应的坐标和朝向。
 
 ### Q: 如何启用玩家加入时的处理？
-A: 在 `config.yml` 文件中配置 `onPlayerJoin` 部分，将 `enable` 设置为 `true`，并根据需要启用欢迎消息、游戏模式更改等功能。
+A: 在 `config.yml` 文件中配置 `onPlayerJoin` 部分，将 `enable` 设置为 `true`，并根据需要启用欢迎消息、游戏模式更改等功能，在`onJoin.yml`中可以获得更多扩展的功能。
 
 ### Q: 如何启用游戏大厅功能？
 A: 在 `config.yml` 文件中配置 `Lobby` 部分，将 `enable` 设置为 `true`，并根据需要启用防止破坏方块、防止放置方块等功能。
