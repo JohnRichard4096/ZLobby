@@ -1,5 +1,5 @@
 name: ZLOBBY
-version: '1.2.1-Dev-SNAPSHOT'
+version: '1.3-Dev-SNAPSHOT'
 main: com.john4096.zLOBBY.ZLOBBY
 api-version: '1.17'
 authors: [ JohnRichard4096 ]
@@ -43,9 +43,8 @@ permissions:
     children:
       zlobby.main: true
       zlobby.main.*: true
-      zlobby.lobby.changeMode: true
-      zlobby.lobby.break: true
-      zlobby.lobby.place: true
+      zlobby.lobby.*: true
+      zlobby.effect: true
     default: false
 
   zlobby.main.reload:
@@ -67,6 +66,7 @@ permissions:
       zlobby.lobby.tp: false
       zlobby.lobby.feed: true
       zlobby.lobby.health: true
+
     default: false
   zlobby.lobby.noChangeMode:
     description: "Not change player's mode"
@@ -88,4 +88,7 @@ permissions:
     default: true
   zlobby.health:
     description: "Could heal HP with this player"
+    default: true
+  zlobby.effect:
+    description: "Could generate fireworks/sound/title on player join"
     default: true

@@ -51,22 +51,23 @@ Java版本要求:
 | `/zlobby info`   | 显示插件详细信息   | `zlobby.main.info`子节点`zlobby.main.info.more`拥有可获取更多信息 |
 
 ### 权限
-| 权限节点                        | 描述                   | 默认值    |
-|-----------------------------|----------------------|--------|
-| `zlobby.main`               | 允许使用部分命令（不是所有子命令）    | `默认`   |
-| `zlobby.main.*`             | 允许使用所有主要命令           | `都不持有` |
-| `zlobby.*`                  | 拥有所有权限               | `都不持有` |
-| `zlobby.main.reload`        | 允许重新加载 ZLobby        | `op`   |
-| `zlobby.main.info`          | 允许获取 ZLobby 信息       | `默认`   |
-| `zlobby.main.info.more`     | 允许获取更多 ZLobby 信息     | `op`   |
-| `zlobby.lobby.*`            | 提供类似管理员的权限在 ZLobby 中 | `都不持有` |
-| `zlobby.lobby.noChangeMode` | 模式不被更改               | `都不持有` |
-| `zlobby.lobby.break`        | 允许破坏方块               | `op`   |
-| `zlobby.lobby.place`        | 允许放置方块               | `op`   |
-| `zlobby.lobby.neverKick`    | 永远不会因为操作方块踢出服务器      | `都不持有` |
-| `zlobby.lobby.tp`           | 允许传送到指定位置            | `默认`   |
-| `zlobby.lobby.feed`         | 允许喂饱玩家               | `默认`   |
-| `zlobby.lobby.health`       | 允许治疗玩家生命值            | `默认`   |
+| 权限节点                        | 描述                     | 默认值    |
+|-----------------------------|------------------------|--------|
+| `zlobby.main`               | 允许使用部分命令（不是所有子命令）      | `默认`   |
+| `zlobby.main.*`             | 允许使用所有主要命令             | `都不持有` |
+| `zlobby.*`                  | 拥有所有权限                 | `都不持有` |
+| `zlobby.main.reload`        | 允许重新加载 ZLobby          | `op`   |
+| `zlobby.main.info`          | 允许获取 ZLobby 信息         | `默认`   |
+| `zlobby.main.info.more`     | 允许获取更多 ZLobby 信息       | `op`   |
+| `zlobby.lobby.*`            | 提供类似管理员的权限在 ZLobby 中   | `都不持有` |
+| `zlobby.lobby.noChangeMode` | 模式不被更改                 | `都不持有` |
+| `zlobby.lobby.break`        | 允许破坏方块                 | `op`   |
+| `zlobby.lobby.place`        | 允许放置方块                 | `op`   |
+| `zlobby.lobby.neverKick`    | 永远不会因为操作方块踢出服务器        | `都不持有` |
+| `zlobby.lobby.tp`           | 允许传送到指定位置              | `默认`   |
+| `zlobby.lobby.feed`         | 允许喂饱玩家                 | `默认`   |
+| `zlobby.lobby.health`       | 允许治疗玩家生命值              | `默认`   |
+| `zlobby.effect`             | 当玩家加入时是否产生配置文件设置好的视觉效果 | `默认`   |
 
 #### 特别说明
 | 权限节点            | 描述         | 默认值   |
@@ -81,7 +82,9 @@ Java版本要求:
 插件配置文件位于 `config.yml`，您可以根据需要进行修改。
 
 ### 主要配置项
-默认配置文件
+默认配置文件`config.yml`
+
+<details><summary>查看详情</summary>
 
 ```yaml
 # 插件配置
@@ -132,6 +135,46 @@ Lobby:
    # 是否给玩家补充满饥饿值与血量
    feedPlayer: true
 ```
+
+</details>
+
+`onJoin.yml`
+
+<details><summary>查看详情</summary>
+
+```yaml
+# 玩家加入功能的扩展，可使用&表示颜色；变量{player}表示玩家，{server}表示config.yml的服务器名称
+onJoin:
+  title:
+    # 是否启用标题
+    enable: false
+    # 标题
+    title: "Welcome {player}"
+    # 副标题
+    subtitle: "to {server}"
+    # 显示时间
+    time: 5
+  playSound:
+    # 是否启用音效
+    enable: false
+    # 要播放的音效列表，ID可以参考https://zh.minecraft.wiki/w/Sounds.json的Java版内容
+    sound:
+      - "entity.experience_orb.pickup"
+  firework:
+    # 是否启用烟花
+    enable: false
+    # 烟花列表
+    fireworks:
+      -
+        # 类型 BALL, BALL_LARGE, STAR, BURST, CREEPER
+        type: BALL_LARGE
+        # 颜色 使用Bukkit的DyeColor
+        color: RED
+        power: 3
+```
+
+</details>
+
 ## Java版本支持
 本插件支持 `Java 21+` 版本（classfile version 65.0）。
 

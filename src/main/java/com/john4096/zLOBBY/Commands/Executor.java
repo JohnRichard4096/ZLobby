@@ -28,6 +28,7 @@ public final class Executor implements CommandExecutor {
                     return true;
                 }
                 ZLOBBY.getPlugin(ZLOBBY.class).reloadConfig();
+
                 sender.sendMessage(ChatColor.GREEN+"Reload complete");
                 return true;
             } else if (args[0].equals("info")) {

@@ -1,0 +1,28 @@
+# 玩家加入功能的扩展，可使用&表示颜色；变量{player}表示玩家，{server}表示config.yml的服务器名称
+onJoin:
+  title:
+    # 是否启用标题
+    enable: false
+    # 标题
+    title: "Welcome {player}"
+    # 副标题
+    subtitle: "to {server}"
+    # 显示时间
+    time: 5
+  playSound:
+    # 是否启用音效
+    enable: false
+    # 要播放的音效列表，ID可以参考https://zh.minecraft.wiki/w/Sounds.json的Java版内容
+    sound:
+      - "entity.experience_orb.pickup"
+  firework:
+    # 是否启用烟花
+    enable: false
+    # 烟花列表
+    fireworks:
+      -
+        # 类型 BALL, BALL_LARGE, STAR, BURST, CREEPER
+        type: BALL_LARGE
+        # 颜色 使用Bukkit的DyeColor
+        color: RED
+        power: 3

@@ -1,8 +1,11 @@
 package com.john4096.zLOBBY;
 import org.bukkit.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +21,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -26,11 +30,12 @@ public class EventListener  implements Listener {
     private final Logger logger = ZLOBBY.getPlugin(ZLOBBY.class).getLogger();
     private Location TPL;
     private FileConfiguration config;
-
+    private FileConfiguration onJoinConfig;
     private Map<String, Integer> playerAttemptCounts = new HashMap<>();
 
     public void onEnable() {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         logger.info("EventHandler loaded");
     }
     @EventHandler
@@ -39,7 +44,7 @@ public class EventListener  implements Listener {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.TPL = loadTPLocation();
         boolean enable = config.getBoolean("onPlayerJoin.enable");
-
+        Location location = player.getLocation();
 
         if (!enable){
             return;
@@ -114,6 +119,89 @@ public class EventListener  implements Listener {
             }
         }catch (Exception e){
             logger.log(Level.WARNING,"Feed player failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+        try{
+            if (onJoinConfig.getBoolean("onJoin.title.enable") && player.hasPermission("zlobby.effect")){
+                logger.info("Sending title to player " + event.getPlayer().getName());
+                String title = onJoinConfig.getString("onJoin.title.title");
+                String subtitle = onJoinConfig.getString("onJoin.title.subtitle");
+                if (title == null || subtitle == null) {
+                    logger.warning("Title is null, please check your config.yml!");
+                    throw new NullPointerException("onPlayerJoin.title.title or onPlayerJoin.title.subtitle is null!But it was enabled!");
+                }
+                if (title.contains("{player}")){
+                    title = title.replace("{player}", event.getPlayer().getName());
+                }
+                if (title.contains("{server}")){
+                    title = title.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
+                }
+                if (title.contains("&")){
+                    title = title.replace("&", "§");
+                }
+                if (subtitle.contains("{player}")){
+                    subtitle = subtitle.replace("{player}", event.getPlayer().getName());
+                }
+                if (subtitle.contains("{server}")){
+                    subtitle = subtitle.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
+                }
+                if (subtitle.contains("&")){
+                    subtitle = subtitle.replace("&", "§");
+                }
+                event.getPlayer().sendTitle(title, subtitle, 0, onJoinConfig.getInt("onJoin.title.time"), 0);
+
+            }
+        }catch (Exception e){
+            logger.log(Level.WARNING,"Send title failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+        try{
+            if (onJoinConfig.getBoolean("onJoin.playSound.enable") && player.hasPermission("zlobby.effect")){
+                logger.info("Sending sound to player " + event.getPlayer().getName());
+                for (String sound : onJoinConfig.getStringList("onJoin.playSound.sound")){
+                    event.getPlayer().playSound(event.getPlayer().getLocation(),sound , 1, 1);
+                }
+            }
+        }catch (Exception e){
+            logger.log(Level.WARNING,"Sound send failed!");
+            logger.log(Level.WARNING,"Exception:"+e.getMessage());
+            e.printStackTrace();
+        }
+        try{
+            if (onJoinConfig.getBoolean("onJoin.firework.enable") && player.hasPermission("zlobby.effect")){
+                logger.info("Sending firework to player " + event.getPlayer().getName());
+                List<Map<?, ?>> fireworks = onJoinConfig.getMapList("onJoin.firework.fireworks");
+                for (Map<?, ?> fireworkConfig : fireworks) {
+                    String typeStr = (String) fireworkConfig.get("type");
+                    String colorStr = (String) fireworkConfig.get("color");
+                    int power = (int) fireworkConfig.get("power");
+
+                    FireworkEffect.Type type = FireworkEffect.Type.valueOf(typeStr);
+                    Color color;
+                    try {
+                        DyeColor dyeColor = DyeColor.valueOf(colorStr.toUpperCase(Locale.ROOT));
+                        color = dyeColor.getColor();
+                    } catch (IllegalArgumentException e) {
+                        logger.warning("Invalid color name: " + colorStr);
+                        continue; // skip this firework
+                    }
+
+                    FireworkEffect effect = FireworkEffect.builder()
+                            .with(type)
+                            .withColor(color)
+                            .build();
+
+                    Firework firework = location.getWorld().spawn(location, Firework.class);
+                    FireworkMeta meta = firework.getFireworkMeta();
+                    meta.addEffect(effect);
+                    meta.setPower(power);
+                    firework.setFireworkMeta(meta);
+                }
+            }
+        }catch (Exception e){
+            logger.log(Level.WARNING,"Firework send failed!");
             logger.log(Level.WARNING,"Exception:"+e.getMessage());
             e.printStackTrace();
         }
