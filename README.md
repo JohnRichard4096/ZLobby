@@ -5,7 +5,6 @@
 <center>
 
 # ZLOBBY 大厅插件
-
 </center>
 
 <hr />
