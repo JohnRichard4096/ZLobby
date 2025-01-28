@@ -14,6 +14,7 @@ public final class Executor implements CommandExecutor {
     YamlConfiguration onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         if (command.getName().equalsIgnoreCase("zlobby")){
             if (args.length == 0){
                 if (!sender.hasPermission("zlobby.main")) {

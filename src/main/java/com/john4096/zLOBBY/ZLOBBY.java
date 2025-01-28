@@ -17,6 +17,7 @@ public final class ZLOBBY extends JavaPlugin {
     public FileConfiguration config;
     public YamlConfiguration onJoinConfig;
     private File onJoinFile = new File(getDataFolder(), "onJoin.yml");
+    public EventListener eventListener = new EventListener();
     @Override
     public void onEnable() {
         final String version = this.version;
@@ -24,7 +25,7 @@ public final class ZLOBBY extends JavaPlugin {
         // Plugin startup logic
         logger.info("Loading Simple ZCraft Lobby plugin");
         logger.info("Running on version"+version);
-        EventListener eventListener = new EventListener();
+
         eventListener.onEnable();
         Bukkit.getPluginManager().registerEvents(eventListener, this);
         logger.info("Listener loaded");
@@ -65,6 +66,7 @@ public final class ZLOBBY extends JavaPlugin {
         if (!this.onJoinFile.exists()){
             saveResource("onJoin.yml",false);
         }
+
         this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
     }
 

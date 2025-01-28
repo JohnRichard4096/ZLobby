@@ -7,7 +7,9 @@ import java.util.logging.Level;
 
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -38,6 +40,11 @@ public class EventListener  implements Listener {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         logger.info("EventHandler loaded");
+    }
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void preProcessing(Event event){
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
+        this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
     }
     @EventHandler
     public void  onPlayerJoin(PlayerJoinEvent event) {
@@ -241,6 +248,7 @@ public class EventListener  implements Listener {
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event){
         Player player = event.getPlayer();
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.TPL = loadTPLocation();
         boolean enable = config.getBoolean("onPlayerJoin.enable");
@@ -293,6 +301,7 @@ public class EventListener  implements Listener {
     }
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         Player player = event.getPlayer();
