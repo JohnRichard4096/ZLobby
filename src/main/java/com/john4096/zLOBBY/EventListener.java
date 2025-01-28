@@ -11,9 +11,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import  org.bukkit.event.block.BlockBreakEvent;
 import  org.bukkit.event.block.BlockPlaceEvent;
@@ -41,17 +43,16 @@ public class EventListener  implements Listener {
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         logger.info("EventHandler loaded");
     }
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void preProcessing(Event event){
-        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
-        this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
-    }
+
+
+
     @EventHandler
     public void  onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.TPL = loadTPLocation();
-        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
+
         boolean enable = config.getBoolean("onPlayerJoin.enable");
         this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Location location = player.getLocation();
@@ -302,8 +303,8 @@ public class EventListener  implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
-        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
+        this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Player player = event.getPlayer();
         boolean enable = config.getBoolean("Lobby.enable");
         if (!enable){
@@ -330,6 +331,7 @@ public class EventListener  implements Listener {
     }
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Player player = event.getPlayer();
@@ -361,6 +363,8 @@ public class EventListener  implements Listener {
     }
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
+        this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
         Player player = event.getPlayer();
         Location location = player.getLocation();
@@ -381,6 +385,7 @@ public class EventListener  implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         this.Debug = ZLOBBY.getPlugin(ZLOBBY.class).Debug;
+        this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         Player player;
         try {
