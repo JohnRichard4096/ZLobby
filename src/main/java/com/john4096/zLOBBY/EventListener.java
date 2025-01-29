@@ -46,50 +46,56 @@ public class EventListener  implements Listener {
         this.worldSettingConfig = ZLOBBY.getPlugin(ZLOBBY.class).getWorldSettingConfig();
         logger.info("EventHandler loaded");
     }
-    @EventHandler
-    public void onServerAvailable(ServerLoadEvent event) {
-        this.worldSettingConfig = ZLOBBY.getPlugin(ZLOBBY.class).getWorldSettingConfig();
-        if( worldSettingConfig.getBoolean("global.enable")){
-            logger.info("Setting world......");
-            for (World world : Bukkit.getWorlds()) {
-                world.setPVP(worldSettingConfig.getBoolean("global.pvp"));
-                world.setGameRule(GameRule.DO_FIRE_TICK, worldSettingConfig.getBoolean("global.fireTick"));
-                world.setGameRule(GameRule.DO_MOB_SPAWNING, worldSettingConfig.getBoolean("global.mobSpawn"));
-                world.setGameRule(GameRule.KEEP_INVENTORY, worldSettingConfig.getBoolean("global.keepInventory"));
-                world.setGameRule(GameRule.DO_WEATHER_CYCLE, worldSettingConfig.getBoolean("global.weatherChange"));
-                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, worldSettingConfig.getBoolean("global.daylightCycle"));
 
-            }
-            for (Map<?,?> WorldConf : worldSettingConfig.getMapList("worlds")) {
-                try{
-                    if (WorldConf.get("world") != null) {
-                        World world = Bukkit.getWorld(WorldConf.get("world").toString());
-                        boolean pvp = (Boolean) WorldConf.get("pvp");
-                        boolean mobSpawn = (Boolean) WorldConf.get("mobSpawn");
-                        boolean fireTick = (Boolean) WorldConf.get("fireTick");
-                        boolean weatherChange = (Boolean) WorldConf.get("weatherChange");
-                        String difficulty = WorldConf.get("difficulty").toString();
-                        boolean daylightCycle = (Boolean) WorldConf.get("daylightCycle");
-                        boolean keepInventory = (Boolean) WorldConf.get("keepInventory");
-                        world.setGameRule(GameRule.KEEP_INVENTORY, keepInventory);
-                        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, daylightCycle);
-                        world.setGameRule(GameRule.DO_WEATHER_CYCLE, weatherChange);
-                        world.setGameRule(GameRule.DO_MOB_SPAWNING, mobSpawn);
-                        world.setGameRule(GameRule.DO_FIRE_TICK, fireTick);
-                        world.setPVP(pvp);
-                        world.setDifficulty(Difficulty.valueOf(difficulty.toUpperCase(Locale.ROOT)));
-                    }
-                }catch (ClassCastException e){
-                    logger.severe("Illegal config when setting world setting!");
-                    logger.warning("World setting config error!");
-                    e.printStackTrace();
-                }catch (Exception e){
-                    logger.severe("Something went wrong!");
-                    e.printStackTrace();
+    public void onMapLoading() {
+        try {
+            this.worldSettingConfig = ZLOBBY.getPlugin(ZLOBBY.class).getWorldSettingConfig();
+            if (worldSettingConfig.getBoolean("global.enable")) {
+                logger.info("Setting worlds by global setting......");
+                for (World world : Bukkit.getWorlds()) {
+                    world.setPVP(worldSettingConfig.getBoolean("global.pvp"));
+                    world.setGameRule(GameRule.DO_FIRE_TICK, worldSettingConfig.getBoolean("global.fireTick"));
+                    world.setGameRule(GameRule.DO_MOB_SPAWNING, worldSettingConfig.getBoolean("global.mobSpawn"));
+                    world.setGameRule(GameRule.KEEP_INVENTORY, worldSettingConfig.getBoolean("global.keepInventory"));
+                    world.setGameRule(GameRule.DO_WEATHER_CYCLE, worldSettingConfig.getBoolean("global.weatherChange"));
+                    world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, worldSettingConfig.getBoolean("global.daylightCycle"));
+
                 }
+                for (Map<?, ?> WorldConf : worldSettingConfig.getMapList("worlds")) {
+                    try {
+                        if (WorldConf.get("world") != null) {
+                            logger.info("Setting world " + WorldConf.get("world"));
+                            World world = Bukkit.getWorld(WorldConf.get("world").toString());
+                            boolean pvp = (Boolean) WorldConf.get("pvp");
+                            boolean mobSpawn = (Boolean) WorldConf.get("mobSpawn");
+                            boolean fireTick = (Boolean) WorldConf.get("fireTick");
+                            boolean weatherChange = (Boolean) WorldConf.get("weatherChange");
+                            String difficulty = WorldConf.get("difficulty").toString();
+                            boolean daylightCycle = (Boolean) WorldConf.get("daylightCycle");
+                            boolean keepInventory = (Boolean) WorldConf.get("keepInventory");
+                            world.setGameRule(GameRule.KEEP_INVENTORY, keepInventory);
+                            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, daylightCycle);
+                            world.setGameRule(GameRule.DO_WEATHER_CYCLE, weatherChange);
+                            world.setGameRule(GameRule.DO_MOB_SPAWNING, mobSpawn);
+                            world.setGameRule(GameRule.DO_FIRE_TICK, fireTick);
+                            world.setPVP(pvp);
+                            world.setDifficulty(Difficulty.valueOf(difficulty.toUpperCase(Locale.ROOT)));
+                        }
+                    } catch (ClassCastException e) {
+                        logger.severe("Illegal config when setting world setting!");
+                        logger.warning("World setting config error!");
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        logger.severe("Something went wrong!");
+                        e.printStackTrace();
+                    }
 
+                }
+                logger.info("Setting world finished!");
             }
-            logger.info("Setting world finished!");
+        }catch (Exception e){
+            logger.severe("Could not set worlds!");
+            e.printStackTrace();
         }
     }
     @EventHandler

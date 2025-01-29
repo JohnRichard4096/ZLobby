@@ -6,6 +6,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import  com.john4096.zLOBBY.Commands.*;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.io.File;
 import java.util.logging.Logger;
 
@@ -17,9 +19,10 @@ public final class ZLOBBY extends JavaPlugin {
     private final String version = getDescription().getVersion();
     public FileConfiguration config;
     public YamlConfiguration onJoinConfig;
-    private File onJoinFile = new File(getDataFolder(), "onJoin.yml");
-    private File worldSettingFile = new File(getDataFolder(), "worldSetting.yml");
+    private final File onJoinFile = new File(getDataFolder(), "onJoin.yml");
+    private final File worldSettingFile = new File(getDataFolder(), "worldSetting.yml");
     public YamlConfiguration worldSettingConfig;
+
     @Override
     public void onEnable() {
         final String version = this.version;
@@ -51,6 +54,12 @@ public final class ZLOBBY extends JavaPlugin {
         Bukkit.getPluginCommand("zlobby").setTabCompleter(new CommandTabCompleter());
         EventListener eventListener = new EventListener();
         eventListener.onEnable();
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                eventListener.onMapLoading();
+            }
+        }.runTaskLater(this,1L);
         Bukkit.getPluginManager().registerEvents(eventListener, this);
         logger.info("Listener loaded");
         logger.info("Loading BStats......");
