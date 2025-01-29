@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -25,6 +26,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -37,15 +39,59 @@ public class EventListener  implements Listener {
     private FileConfiguration config;
     private FileConfiguration onJoinConfig;
     private Map<String, Integer> playerAttemptCounts = new HashMap<>();
-
+    private YamlConfiguration worldSettingConfig;
     public void onEnable() {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
+        this.worldSettingConfig = ZLOBBY.getPlugin(ZLOBBY.class).getWorldSettingConfig();
         logger.info("EventHandler loaded");
     }
+    @EventHandler
+    public void onServerAvailable(ServerLoadEvent event) {
+        this.worldSettingConfig = ZLOBBY.getPlugin(ZLOBBY.class).getWorldSettingConfig();
+        if( worldSettingConfig.getBoolean("global.enable")){
+            logger.info("Setting world......");
+            for (World world : Bukkit.getWorlds()) {
+                world.setPVP(worldSettingConfig.getBoolean("global.pvp"));
+                world.setGameRule(GameRule.DO_FIRE_TICK, worldSettingConfig.getBoolean("global.fireTick"));
+                world.setGameRule(GameRule.DO_MOB_SPAWNING, worldSettingConfig.getBoolean("global.mobSpawn"));
+                world.setGameRule(GameRule.KEEP_INVENTORY, worldSettingConfig.getBoolean("global.keepInventory"));
+                world.setGameRule(GameRule.DO_WEATHER_CYCLE, worldSettingConfig.getBoolean("global.weatherChange"));
+                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, worldSettingConfig.getBoolean("global.daylightCycle"));
 
+            }
+            for (Map<?,?> WorldConf : worldSettingConfig.getMapList("worlds")) {
+                try{
+                    if (WorldConf.get("world") != null) {
+                        World world = Bukkit.getWorld(WorldConf.get("world").toString());
+                        boolean pvp = (Boolean) WorldConf.get("pvp");
+                        boolean mobSpawn = (Boolean) WorldConf.get("mobSpawn");
+                        boolean fireTick = (Boolean) WorldConf.get("fireTick");
+                        boolean weatherChange = (Boolean) WorldConf.get("weatherChange");
+                        String difficulty = WorldConf.get("difficulty").toString();
+                        boolean daylightCycle = (Boolean) WorldConf.get("daylightCycle");
+                        boolean keepInventory = (Boolean) WorldConf.get("keepInventory");
+                        world.setGameRule(GameRule.KEEP_INVENTORY, keepInventory);
+                        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, daylightCycle);
+                        world.setGameRule(GameRule.DO_WEATHER_CYCLE, weatherChange);
+                        world.setGameRule(GameRule.DO_MOB_SPAWNING, mobSpawn);
+                        world.setGameRule(GameRule.DO_FIRE_TICK, fireTick);
+                        world.setPVP(pvp);
+                        world.setDifficulty(Difficulty.valueOf(difficulty.toUpperCase(Locale.ROOT)));
+                    }
+                }catch (ClassCastException e){
+                    logger.severe("Illegal config when setting world setting!");
+                    logger.warning("World setting config error!");
+                    e.printStackTrace();
+                }catch (Exception e){
+                    logger.severe("Something went wrong!");
+                    e.printStackTrace();
+                }
 
-
+            }
+            logger.info("Setting world finished!");
+        }
+    }
     @EventHandler
     public void  onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();

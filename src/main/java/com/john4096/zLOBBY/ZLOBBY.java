@@ -18,6 +18,8 @@ public final class ZLOBBY extends JavaPlugin {
     public FileConfiguration config;
     public YamlConfiguration onJoinConfig;
     private File onJoinFile = new File(getDataFolder(), "onJoin.yml");
+    private File worldSettingFile = new File(getDataFolder(), "worldSetting.yml");
+    public YamlConfiguration worldSettingConfig;
     @Override
     public void onEnable() {
         final String version = this.version;
@@ -40,10 +42,9 @@ public final class ZLOBBY extends JavaPlugin {
         }
         logger.info("Loading config......");
         saveDefaultConfig();
-        if (!onJoinFile.exists()){
-            saveResource("onJoin.yml",false);
-        }
+        reloadConfig();
         this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
+        this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
         this.config = getConfig();
         logger.info("Loading listener class......");
         Bukkit.getPluginCommand("zlobby").setExecutor(new Executor());
@@ -73,13 +74,23 @@ public final class ZLOBBY extends JavaPlugin {
         return this.onJoinConfig;
 
     }
+    public YamlConfiguration getWorldSettingConfig(){
+        if (this.worldSettingConfig==null){
+            reloadConfig();
+        }
+        return this.worldSettingConfig;
+    }
     @Override
     public void reloadConfig() {
         super.reloadConfig();
         if (!this.onJoinFile.exists()){
             saveResource("onJoin.yml",false);
         }
+        if (!this.worldSettingFile.exists()){
+            saveResource("worldSetting.yml",false);
+        }
         this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
+        this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
     }
 
 }
