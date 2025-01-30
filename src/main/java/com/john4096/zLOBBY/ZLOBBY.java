@@ -1,7 +1,6 @@
 package com.john4096.zLOBBY;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,6 +8,7 @@ import  com.john4096.zLOBBY.Commands.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 
@@ -22,7 +22,7 @@ public final class ZLOBBY extends JavaPlugin {
     private final File onJoinFile = new File(getDataFolder(), "onJoin.yml");
     private final File worldSettingFile = new File(getDataFolder(), "worldSetting.yml");
     public YamlConfiguration worldSettingConfig;
-
+    public EventListener eventListener;
     @Override
     public void onEnable() {
         final String version = this.version;
@@ -50,9 +50,9 @@ public final class ZLOBBY extends JavaPlugin {
         this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
         this.config = getConfig();
         logger.info("Loading listener class......");
-        Bukkit.getPluginCommand("zlobby").setExecutor(new Executor());
-        Bukkit.getPluginCommand("zlobby").setTabCompleter(new CommandTabCompleter());
-        EventListener eventListener = new EventListener();
+        Objects.requireNonNull(Bukkit.getPluginCommand("zlobby")).setExecutor(new Executor());
+        Objects.requireNonNull(Bukkit.getPluginCommand("zlobby")).setTabCompleter(new CommandTabCompleter());
+        eventListener= new EventListener();
         eventListener.onEnable();
         new BukkitRunnable(){
             @Override
@@ -64,7 +64,7 @@ public final class ZLOBBY extends JavaPlugin {
         logger.info("Listener loaded");
         logger.info("Loading BStats......");
         int pluginId =  24574;
-        Metrics metrics = new Metrics(this, pluginId);
+        new Metrics(this, pluginId);
 
         logger.info("Loaded!");
     }

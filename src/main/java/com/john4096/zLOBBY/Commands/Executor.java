@@ -22,7 +22,7 @@ public final class Executor implements CommandExecutor {
                     return true;
                 }
                 String version = ZLOBBY.getPlugin(ZLOBBY.class).getDescription().getVersion();
-                String info = ChatColor.GREEN+"ZLOBBY "+version+" by JohnRichard4096";
+                String info = ChatColor.GREEN+"ZLOBBY "+version+ChatColor.GOLD+" by JohnRichard4096";
                 sender.sendMessage(info);
                 return true;
             }
@@ -31,8 +31,9 @@ public final class Executor implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
                     return true;
                 }
+                sender.sendMessage(ChatColor.GREEN+"Reloading config and world settings......");
                 ZLOBBY.getPlugin(ZLOBBY.class).reloadConfig();
-
+                ZLOBBY.getPlugin(ZLOBBY.class).eventListener.onMapLoading();
                 sender.sendMessage(ChatColor.GREEN+"Reload complete");
                 return true;
             } else if (args[0].equals("info")) {
@@ -83,8 +84,7 @@ public final class Executor implements CommandExecutor {
                 }
                 return true;
             } else if (args[0].equals("debugger")) {
-                if (sender instanceof Player){
-                    Player player = (Player) sender;
+                if (sender instanceof Player player){
                     if (!player.hasPermission("zlobby.main.debugger")){
                         sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
                         return true;

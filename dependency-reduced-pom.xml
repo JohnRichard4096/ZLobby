@@ -4,7 +4,7 @@
   <groupId>com.john4096</groupId>
   <artifactId>ZLOBBY</artifactId>
   <name>ZLOBBY</name>
-  <version>1.4-Dev-SNAPSHOT</version>
+  <version>1.4-SNAPSHOT</version>
   <build>
     <defaultGoal>clean package</defaultGoal>
     <resources>

@@ -1,32 +1,26 @@
 package com.john4096.zLOBBY;
 import org.bukkit.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.logging.Level;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import  org.bukkit.event.block.BlockBreakEvent;
 import  org.bukkit.event.block.BlockPlaceEvent;
-import java.util.Locale;
+
 import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
@@ -73,13 +67,18 @@ public class EventListener  implements Listener {
                             String difficulty = WorldConf.get("difficulty").toString();
                             boolean daylightCycle = (Boolean) WorldConf.get("daylightCycle");
                             boolean keepInventory = (Boolean) WorldConf.get("keepInventory");
-                            world.setGameRule(GameRule.KEEP_INVENTORY, keepInventory);
-                            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, daylightCycle);
-                            world.setGameRule(GameRule.DO_WEATHER_CYCLE, weatherChange);
-                            world.setGameRule(GameRule.DO_MOB_SPAWNING, mobSpawn);
-                            world.setGameRule(GameRule.DO_FIRE_TICK, fireTick);
-                            world.setPVP(pvp);
-                            world.setDifficulty(Difficulty.valueOf(difficulty.toUpperCase(Locale.ROOT)));
+                            if (world != null) {
+                                world.setGameRule(GameRule.KEEP_INVENTORY, keepInventory);
+                                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, daylightCycle);
+                                world.setGameRule(GameRule.DO_WEATHER_CYCLE, weatherChange);
+                                world.setGameRule(GameRule.DO_MOB_SPAWNING, mobSpawn);
+                                world.setGameRule(GameRule.DO_FIRE_TICK, fireTick);
+                                world.setPVP(pvp);
+                                world.setDifficulty(Difficulty.valueOf(difficulty.toUpperCase(Locale.ROOT)));
+                            }else{
+                                logger.severe("World " + WorldConf.get("world") + " not found!");
+                                logger.severe("Please check your config!");
+                            }
                         }
                     } catch (ClassCastException e) {
                         logger.severe("Illegal config when setting world setting!");
@@ -118,7 +117,7 @@ public class EventListener  implements Listener {
 
                     logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
                     event.getPlayer().teleport(TPL);
-                    TPL.getWorld().setSpawnLocation(TPL);
+                    Objects.requireNonNull(TPL.getWorld()).setSpawnLocation(TPL);
 
 
             }
@@ -145,7 +144,7 @@ public class EventListener  implements Listener {
             }
             if(welcomeMessage.contains("{server}")){
                 if(Debug) logger.info("Welcome message contains {server}");
-                welcomeMessage = welcomeMessage.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
+                welcomeMessage = welcomeMessage.replace("{server}", Objects.requireNonNull(config.getString("onPlayerJoin.welcomeMessage.serverName")));
             }
             if (welcomeMessage.contains("&")){
                 if(Debug) logger.info("Welcome message contains &");
@@ -163,7 +162,7 @@ public class EventListener  implements Listener {
         if (config.getBoolean("onPlayerJoin.changeGameMode.enable")&&!player.hasPermission("zlobby.lobby.noChangeMode")) {
 
                 logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
-                event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
+                event.getPlayer().setGameMode(GameMode.valueOf(Objects.requireNonNull(config.getString("onPlayerJoin.changeGameMode.gameMode")).toUpperCase(Locale.ROOT)));
 
 
         }
@@ -205,7 +204,7 @@ public class EventListener  implements Listener {
                     title = title.replace("{player}", event.getPlayer().getName());
                 }
                 if (title.contains("{server}")){
-                    title = title.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
+                    title = title.replace("{server}", Objects.requireNonNull(config.getString("onPlayerJoin.welcomeMessage.serverName")));
                 }
                 if (title.contains("&")){
                     title = title.replace("&", "§");
@@ -214,7 +213,7 @@ public class EventListener  implements Listener {
                     subtitle = subtitle.replace("{player}", event.getPlayer().getName());
                 }
                 if (subtitle.contains("{server}")){
-                    subtitle = subtitle.replace("{server}",config.getString("onPlayerJoin.welcomeMessage.serverName"));
+                    subtitle = subtitle.replace("{server}", Objects.requireNonNull(config.getString("onPlayerJoin.welcomeMessage.serverName")));
                 }
                 if (subtitle.contains("&")){
                     subtitle = subtitle.replace("&", "§");
@@ -283,7 +282,7 @@ public class EventListener  implements Listener {
                                     .withColor(color)
                                     .build();
 
-                            Firework firework = location.getWorld().spawn(location, Firework.class);
+                            Firework firework = Objects.requireNonNull(location.getWorld()).spawn(location, Firework.class);
                             FireworkMeta meta = firework.getFireworkMeta();
                             meta.addEffect(effect);
                             meta.setPower(power);
@@ -317,7 +316,7 @@ public class EventListener  implements Listener {
                     logger.info("Teleporting player " + event.getPlayer().getName() + " to " + TPL.toString());
 
                     event.getPlayer().teleport(TPL);
-                    TPL.getWorld().setSpawnLocation(TPL);
+                    Objects.requireNonNull(TPL.getWorld()).setSpawnLocation(TPL);
 
             }
         }catch (Exception e){
@@ -330,7 +329,7 @@ public class EventListener  implements Listener {
         try{
             if (config.getBoolean("onPlayerJoin.changeGameMode.enable")&&!player.hasPermission("zlobby.lobby.noChangeMode")) {
                 logger.info("Changing player " + event.getPlayer().getName() + " game mode to " + config.getString("onPlayerJoin.changeGameMode.gameMode"));
-                event.getPlayer().setGameMode(GameMode.valueOf(config.getString("onPlayerJoin.changeGameMode.gameMode").toUpperCase(Locale.ROOT)));
+                event.getPlayer().setGameMode(GameMode.valueOf(Objects.requireNonNull(config.getString("onPlayerJoin.changeGameMode.gameMode")).toUpperCase(Locale.ROOT)));
             }
         }catch (Exception e){
             logger.log(Level.WARNING,"Change game mode failed!");

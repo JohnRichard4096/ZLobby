@@ -32,8 +32,6 @@ ZLOBBY 是一个专为（1.20.5+）**群组服务器**大厅设计的 Minecraft 
 ## 安装
 从Release下载插件，解压到服务器的插件目录中。
 
-Java版本要求:
-- Java 21+
 
 游戏版本要求（插件版本>=1.2）:
 - (Spigot/Paper及其分支)1.20.5+
@@ -178,6 +176,47 @@ onJoin:
         color: RED
         power: 3
 ```
+
+</details>
+
+`worldSetting.yml`
+
+<details><summary>查看详情</summary>
+
+# 全局世界规则设置，规则设置权重低于单个世界设置，覆盖没有单独设置的世界的规则
+global:
+# 全局开关，关闭后所有世界规则都失效
+enable: false
+# pvp开关
+pvp: false
+# 怪物生成开关
+mobSpawn: false
+# 火焰燃烧开关
+fireTick: false
+# 天气变化开关
+weatherChange: false
+# 难度
+difficulty: PEACEFUL
+# 时间是否循环
+daylightCycle: false
+# 保留物品栏
+keepInventory: true
+# 特定世界规则设置
+worlds:
+-
+# 是否启用
+enable: false
+# 世界名
+world: "world"
+# 规则，同上
+pvp: false
+mobSpawn: false
+fireTick: false
+weatherChange: false
+difficulty: PEACEFUL
+daylightCycle: false
+keepInventory: true
+
 
 </details>
 
