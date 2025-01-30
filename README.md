@@ -2,6 +2,7 @@
 
 # ZLOBBY 大厅插件
 
+## 前言：本README仅为最新的ZLobby Release编写，最新版本请查看[Release](https://github.com/JohnRichard4096/ZLobby/releases)！
 
 <hr />
 
