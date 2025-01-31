@@ -184,6 +184,7 @@ onJoin:
 
 <details><summary>查看详情</summary>
 
+```yaml
 # 全局世界规则设置，规则设置权重低于单个世界设置，覆盖没有单独设置的世界的规则
 global:
 # 全局开关，关闭后所有世界规则都失效
@@ -218,6 +219,7 @@ difficulty: PEACEFUL
 daylightCycle: false
 keepInventory: true
 
+```
 
 </details>
 
