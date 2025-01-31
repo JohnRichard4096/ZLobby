@@ -18,8 +18,8 @@ public final class CommandTabCompleter implements TabCompleter {
                 completions.add("reload");
                 completions.add("info");
                 completions.add("debugger");
-            }else if(args.length==2){
-                if(args[0].equalsIgnoreCase("debugger")){
+            } else if (args.length == 2) {
+                if (args[0].equalsIgnoreCase("debugger")) {
                     completions.add("on");
                     completions.add("off");
                 }

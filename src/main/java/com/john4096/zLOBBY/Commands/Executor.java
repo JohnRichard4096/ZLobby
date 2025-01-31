@@ -12,35 +12,35 @@ import org.jetbrains.annotations.NotNull;
 
 public final class Executor implements CommandExecutor {
     YamlConfiguration onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
-        if (command.getName().equalsIgnoreCase("zlobby")){
-            if (args.length == 0){
+        if (command.getName().equalsIgnoreCase("zlobby")) {
+            if (args.length == 0) {
                 if (!sender.hasPermission("zlobby.main")) {
-                    sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
+                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
                     return true;
                 }
                 String version = ZLOBBY.getPlugin(ZLOBBY.class).getDescription().getVersion();
-                String info = ChatColor.GREEN+"ZLOBBY "+version+ChatColor.GOLD+" by JohnRichard4096";
+                String info = ChatColor.GREEN + "ZLOBBY " + version + ChatColor.GOLD + " by JohnRichard4096";
                 sender.sendMessage(info);
                 return true;
-            }
-            else if (args[0].equals("reload")){
-                if (!sender.hasPermission("zlobby.main.reload")){
-                    sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
+            } else if (args[0].equals("reload")) {
+                if (!sender.hasPermission("zlobby.main.reload")) {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
                     return true;
                 }
-                sender.sendMessage(ChatColor.GREEN+"Reloading config and world settings......");
+                sender.sendMessage(ChatColor.GREEN + "Reloading config and world settings......");
                 ZLOBBY.getPlugin(ZLOBBY.class).reloadConfig();
                 ZLOBBY.getPlugin(ZLOBBY.class).eventListener.onMapLoading();
-                sender.sendMessage(ChatColor.GREEN+"Reload complete");
+                sender.sendMessage(ChatColor.GREEN + "Reload complete");
                 return true;
             } else if (args[0].equals("info")) {
                 String version = ZLOBBY.getPlugin(ZLOBBY.class).getDescription().getVersion();
-                String info = ChatColor.GREEN+"ZLOBBY "+version+" by "+ChatColor.GOLD+"JohnRichard4096";
+                String info = ChatColor.GREEN + "ZLOBBY " + version + " by " + ChatColor.GOLD + "JohnRichard4096";
                 sender.sendMessage(info);
-                if (sender.hasPermission("zlobby.main.info.more")){
+                if (sender.hasPermission("zlobby.main.info.more")) {
                     Configuration config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
 
                     boolean lobbyEnable = config.getBoolean("Lobby.enable");
@@ -59,60 +59,60 @@ public final class Executor implements CommandExecutor {
                     boolean fireWorkEnable = onJoinConfig.getBoolean("onJoin.firework.enable");
 
 
-                    sender.sendMessage(ChatColor.GREEN+"teleport location on player join: "+ChatColor.GOLD+tpEnable);
+                    sender.sendMessage(ChatColor.GREEN + "teleport location on player join: " + ChatColor.GOLD + tpEnable);
 
-                    sender.sendMessage(ChatColor.GREEN+"enable Lobby function: "+ChatColor.GOLD+lobbyEnable);
-                    if (lobbyEnable){
-                        sender.sendMessage(ChatColor.GREEN+"Lobby Avoid Block Break: "+ChatColor.GOLD+lobbyAvoidBlockBreak);
-                        sender.sendMessage(ChatColor.GREEN+"Lobby Avoid Block Place: "+ChatColor.GOLD+lobbyAvoidBlockPlace);
-                        sender.sendMessage(ChatColor.GREEN+"kick player if too many times: "+ChatColor.GOLD+lobbyToKick);
-                        sender.sendMessage(ChatColor.GREEN+"Lobby player max block action times: "+ChatColor.GOLD+lobbyTryTimes);
-                        sender.sendMessage(ChatColor.GREEN+"Lobby Cancel Hurt: "+ChatColor.GOLD+lobbyCancelHurt);
-                        sender.sendMessage(ChatColor.GREEN+"Lobby Feed Player: "+ChatColor.GOLD+lobbyFeedPlayer);
+                    sender.sendMessage(ChatColor.GREEN + "enable Lobby function: " + ChatColor.GOLD + lobbyEnable);
+                    if (lobbyEnable) {
+                        sender.sendMessage(ChatColor.GREEN + "Lobby Avoid Block Break: " + ChatColor.GOLD + lobbyAvoidBlockBreak);
+                        sender.sendMessage(ChatColor.GREEN + "Lobby Avoid Block Place: " + ChatColor.GOLD + lobbyAvoidBlockPlace);
+                        sender.sendMessage(ChatColor.GREEN + "kick player if too many times: " + ChatColor.GOLD + lobbyToKick);
+                        sender.sendMessage(ChatColor.GREEN + "Lobby player max block action times: " + ChatColor.GOLD + lobbyTryTimes);
+                        sender.sendMessage(ChatColor.GREEN + "Lobby Cancel Hurt: " + ChatColor.GOLD + lobbyCancelHurt);
+                        sender.sendMessage(ChatColor.GREEN + "Lobby Feed Player: " + ChatColor.GOLD + lobbyFeedPlayer);
                     }
-                    sender.sendMessage(ChatColor.GREEN+"onPlayerJoin: "+ChatColor.GOLD+onPlayerJoinEnable);
-                    if (onPlayerJoinEnable){
-                        sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Change GameMode: "+ChatColor.GOLD+onPlayerJoinChangeGameMode);
+                    sender.sendMessage(ChatColor.GREEN + "onPlayerJoin: " + ChatColor.GOLD + onPlayerJoinEnable);
+                    if (onPlayerJoinEnable) {
+                        sender.sendMessage(ChatColor.GREEN + "onPlayerJoin Change GameMode: " + ChatColor.GOLD + onPlayerJoinChangeGameMode);
 
-                        sender.sendMessage(ChatColor.GREEN+"onPlayerJoin Welcome Message: "+ChatColor.GOLD+onPlayerJoinWelcomeMessageEnable);
+                        sender.sendMessage(ChatColor.GREEN + "onPlayerJoin Welcome Message: " + ChatColor.GOLD + onPlayerJoinWelcomeMessageEnable);
                     }
-                    sender.sendMessage(ChatColor.GREEN+"Title enable: "+ChatColor.GOLD+titleEnable);
-                    sender.sendMessage(ChatColor.GREEN+"PlaySound enable: "+ChatColor.GOLD+playSoundEnable);
-                    sender.sendMessage(ChatColor.GREEN+"FireWorks enable: "+ChatColor.GOLD+fireWorkEnable);
+                    sender.sendMessage(ChatColor.GREEN + "Title enable: " + ChatColor.GOLD + titleEnable);
+                    sender.sendMessage(ChatColor.GREEN + "PlaySound enable: " + ChatColor.GOLD + playSoundEnable);
+                    sender.sendMessage(ChatColor.GREEN + "FireWorks enable: " + ChatColor.GOLD + fireWorkEnable);
                     return true;
 
                 }
                 return true;
             } else if (args[0].equals("debugger")) {
-                if (sender instanceof Player player){
-                    if (!player.hasPermission("zlobby.main.debugger")){
-                        sender.sendMessage(ChatColor.RED+"You don't have permission to use this command!");
+                if (sender instanceof Player player) {
+                    if (!player.hasPermission("zlobby.main.debugger")) {
+                        sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
                         return true;
                     }
                 }
-                if(!(args.length>=2)){
-                    sender.sendMessage(ChatColor.RED+"Please use /zlobby debugger on/off");
+                if (!(args.length >= 2)) {
+                    sender.sendMessage(ChatColor.RED + "Please use /zlobby debugger on/off");
                     return true;
                 }
                 if (args[1].equals("on")) {
-                    if (!ZLOBBY.getPlugin(ZLOBBY.class).Debug){
+                    if (!ZLOBBY.getPlugin(ZLOBBY.class).Debug) {
                         ZLOBBY.getPlugin(ZLOBBY.class).Debug = true;
-                        sender.sendMessage(ChatColor.GREEN+"Debugger is now setting on");
-                    }else{
-                        sender.sendMessage(ChatColor.RED+"Debugger is already on");
+                        sender.sendMessage(ChatColor.GREEN + "Debugger is now setting on");
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Debugger is already on");
                     }
                     return true;
                 } else if (args[1].equals("off")) {
-                    if (ZLOBBY.getPlugin(ZLOBBY.class).Debug){
+                    if (ZLOBBY.getPlugin(ZLOBBY.class).Debug) {
                         ZLOBBY.getPlugin(ZLOBBY.class).Debug = false;
-                        sender.sendMessage(ChatColor.GREEN+"Debugger is now setting off");
+                        sender.sendMessage(ChatColor.GREEN + "Debugger is now setting off");
 
-                    }else{
-                        sender.sendMessage(ChatColor.RED+"Debugger is already off");
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Debugger is already off");
                     }
                     return true;
 
-                }else return false;
+                } else return false;
 
             } else return false;
         }

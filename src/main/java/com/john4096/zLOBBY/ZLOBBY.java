@@ -4,13 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import  com.john4096.zLOBBY.Commands.*;
+import com.john4096.zLOBBY.Commands.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.Objects;
 import java.util.logging.Logger;
-
 
 
 public final class ZLOBBY extends JavaPlugin {
@@ -23,6 +22,7 @@ public final class ZLOBBY extends JavaPlugin {
     private final File worldSettingFile = new File(getDataFolder(), "worldSetting.yml");
     public YamlConfiguration worldSettingConfig;
     public EventListener eventListener;
+
     @Override
     public void onEnable() {
         final String version = this.version;
@@ -38,8 +38,8 @@ public final class ZLOBBY extends JavaPlugin {
                 `---'`---'`---'`---'`---'`---|
                                          `---'
                                          \033[0m""");
-        logger.info("Running on version"+version);
-        if(version.toLowerCase().contains("dev")){
+        logger.info("Running on version" + version);
+        if (version.toLowerCase().contains("dev")) {
             logger.warning("You are running a development version of the plugin, please do not use it in a production environment");
             logger.warning("See the latest build on https://jenkins.micro-wave.cc/job/ZLobby/");
         }
@@ -52,18 +52,18 @@ public final class ZLOBBY extends JavaPlugin {
         logger.info("Loading listener class......");
         Objects.requireNonNull(Bukkit.getPluginCommand("zlobby")).setExecutor(new Executor());
         Objects.requireNonNull(Bukkit.getPluginCommand("zlobby")).setTabCompleter(new CommandTabCompleter());
-        eventListener= new EventListener();
+        eventListener = new EventListener();
         eventListener.onEnable();
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             @Override
             public void run() {
                 eventListener.onMapLoading();
             }
-        }.runTaskLater(this,1L);
+        }.runTaskLater(this, 1L);
         Bukkit.getPluginManager().registerEvents(eventListener, this);
         logger.info("Listener loaded");
         logger.info("Loading BStats......");
-        int pluginId =  24574;
+        int pluginId = 24574;
         new Metrics(this, pluginId);
 
         logger.info("Loaded!");
@@ -76,27 +76,30 @@ public final class ZLOBBY extends JavaPlugin {
         // Plugin shutdown logic
         logger.info("Unloaded!");
     }
-    public YamlConfiguration getOnJoinConfig(){
-        if (this.onJoinConfig==null){
+
+    public YamlConfiguration getOnJoinConfig() {
+        if (this.onJoinConfig == null) {
             reloadConfig();
         }
         return this.onJoinConfig;
 
     }
-    public YamlConfiguration getWorldSettingConfig(){
-        if (this.worldSettingConfig==null){
+
+    public YamlConfiguration getWorldSettingConfig() {
+        if (this.worldSettingConfig == null) {
             reloadConfig();
         }
         return this.worldSettingConfig;
     }
+
     @Override
     public void reloadConfig() {
         super.reloadConfig();
-        if (!this.onJoinFile.exists()){
-            saveResource("onJoin.yml",false);
+        if (!this.onJoinFile.exists()) {
+            saveResource("onJoin.yml", false);
         }
-        if (!this.worldSettingFile.exists()){
-            saveResource("worldSetting.yml",false);
+        if (!this.worldSettingFile.exists()) {
+            saveResource("worldSetting.yml", false);
         }
         this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
         this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
