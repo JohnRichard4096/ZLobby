@@ -34,7 +34,7 @@ public class EventListener implements Listener {
     private Location TPL;
     private FileConfiguration config;
     private FileConfiguration onJoinConfig;
-    private Map<String, Integer> playerAttemptCounts = new HashMap<>();
+    private final Map<String, Integer> playerAttemptCounts = new HashMap<>();
     private YamlConfiguration worldSettingConfig;
 
     public void onEnable() {
