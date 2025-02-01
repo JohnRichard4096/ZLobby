@@ -9,7 +9,7 @@ commands:
   zlobby:
     description: "ZCRAFT Lobby plugin main command"
     usage: /<command> <subcommand>
-    aliases: [zlo,zl,ZLOBBY]
+    aliases: [ zlo,zl,ZLOBBY ]
     permission: "zlobby.main"
     permission-message: "You have no permission to use this command!"
 
