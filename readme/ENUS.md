@@ -225,6 +225,19 @@ worlds:
 
 </details>
 
+`lang.yml`
+
+<details><summary>More</summary>
+
+```yaml
+# set language
+language:
+  # Language,available: zh_CN, en_US
+  lang: "en_US"
+```
+
+</details>
+
 ## JavaVersion
 This plugin only supports `Java 21` or **higher**.
 

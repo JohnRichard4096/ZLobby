@@ -9,17 +9,20 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ResourceBundle;
+
 
 public final class Executor implements CommandExecutor {
     YamlConfiguration onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
-
+    ResourceBundle language = ZLOBBY.getPlugin(ZLOBBY.class).getLanguage();
     @Override
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
+        this.language = ZLOBBY.getPlugin(ZLOBBY.class).getLanguage();
         if (command.getName().equalsIgnoreCase("zlobby")) {
             if (args.length == 0) {
                 if (!sender.hasPermission("zlobby.main")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+                    sender.sendMessage(ChatColor.RED + language.getString("hasNoPermission"));
                     return true;
                 }
                 String version = ZLOBBY.getPlugin(ZLOBBY.class).getDescription().getVersion();
@@ -28,13 +31,13 @@ public final class Executor implements CommandExecutor {
                 return true;
             } else if (args[0].equals("reload")) {
                 if (!sender.hasPermission("zlobby.main.reload")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+                    sender.sendMessage(ChatColor.RED + language.getString("hasNoPermission"));
                     return true;
                 }
-                sender.sendMessage(ChatColor.GREEN + "Reloading config and world settings......");
+                sender.sendMessage(ChatColor.GREEN + language.getString("reloading"));
                 ZLOBBY.getPlugin(ZLOBBY.class).reloadConfig();
                 ZLOBBY.getPlugin(ZLOBBY.class).eventListener.onMapLoading();
-                sender.sendMessage(ChatColor.GREEN + "Reload complete");
+                sender.sendMessage(ChatColor.GREEN + language.getString("done"));
                 return true;
             } else if (args[0].equals("info")) {
                 String version = ZLOBBY.getPlugin(ZLOBBY.class).getDescription().getVersion();
@@ -86,7 +89,7 @@ public final class Executor implements CommandExecutor {
             } else if (args[0].equals("debugger")) {
                 if (sender instanceof Player player) {
                     if (!player.hasPermission("zlobby.main.debugger")) {
-                        sender.sendMessage(ChatColor.RED + "You don't have permission to use this command!");
+                        sender.sendMessage(ChatColor.RED + language.getString("hasNoPermission"));
                         return true;
                     }
                 }

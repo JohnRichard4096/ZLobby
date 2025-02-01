@@ -209,6 +209,18 @@ worlds:
 
 </details>
 
+`lang.yml`
+<details><summary>查看详情</summary>
+
+```yaml
+# 设置语言
+language:
+  # 语言，可用的：zh_CN, en_US
+  lang: "en_US"
+```
+
+</details>
+
 ## Java版本支持
 本插件支持 `Java 21+` 版本（classfile version 65.0）。
 

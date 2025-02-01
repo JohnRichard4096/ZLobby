@@ -6,7 +6,7 @@
 
     <groupId>com.john4096</groupId>
     <artifactId>ZLOBBY</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-Dev-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>ZLOBBY</name>
