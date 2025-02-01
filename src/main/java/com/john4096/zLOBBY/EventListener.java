@@ -37,6 +37,7 @@ public class EventListener implements Listener {
     private final Map<String, Integer> playerAttemptCounts = new HashMap<>();
     private YamlConfiguration worldSettingConfig;
     private ResourceBundle language;
+
     public void onEnable() {
         this.config = ZLOBBY.getPlugin(ZLOBBY.class).getConfig();
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
@@ -134,13 +135,13 @@ public class EventListener implements Listener {
         }
         try {
             if (config.getBoolean("onPlayerJoin.welcomeMessage.enable") && player.hasPermission("zlobby.message")) {
-                logger.info(language.getString("sendingMessage") +" ->" + event.getPlayer().getName());
+                logger.info(language.getString("sendingMessage") + " ->" + event.getPlayer().getName());
                 String welcomeMessage = config.getString("onPlayerJoin.welcomeMessage.message");
                 if (Debug) {
                     logger.info("welcome message:" + welcomeMessage);
                 }
                 if (welcomeMessage == null) {
-                    logger.warning(language.getString("illegalConfig"+language.getString("pleaseCheckConfig")+"->(onPlayerJoin.welcomeMessage.message)"));
+                    logger.warning(language.getString("illegalConfig" + language.getString("pleaseCheckConfig") + "->(onPlayerJoin.welcomeMessage.message)"));
                     throw new NullPointerException("onPlayerJoin.welcomeMessage.message is null!But it was enabled!");
                 }
                 if (welcomeMessage.contains("{player}")) {
@@ -197,11 +198,11 @@ public class EventListener implements Listener {
         }
         try {
             if (onJoinConfig.getBoolean("onJoin.title.enable") && player.hasPermission("zlobby.lobby.effect")) {
-                logger.info(language.getString("showTitleToPlayer")+" ->" + event.getPlayer().getName());
+                logger.info(language.getString("showTitleToPlayer") + " ->" + event.getPlayer().getName());
                 String title = onJoinConfig.getString("onJoin.title.title");
                 String subtitle = onJoinConfig.getString("onJoin.title.subtitle");
                 if (title == null || subtitle == null) {
-                    logger.warning(language.getString("illegalConfig")+language.getString("pleaseCheckConfig"));
+                    logger.warning(language.getString("illegalConfig") + language.getString("pleaseCheckConfig"));
                     throw new NullPointerException("onPlayerJoin.title.title or onPlayerJoin.title.subtitle is null!But it was enabled!");
                 }
                 if (title.contains("{player}")) {
@@ -243,7 +244,7 @@ public class EventListener implements Listener {
         }
         try {
             if (onJoinConfig.getBoolean("onJoin.playSound.enable") && player.hasPermission("zlobby.lobby.effect")) {
-                logger.info(language.getString("playSoundToPlayer")+" ->" + event.getPlayer().getName());
+                logger.info(language.getString("playSoundToPlayer") + " ->" + event.getPlayer().getName());
                 new BukkitRunnable() {
                     @Override
                     public void run() {
@@ -261,7 +262,7 @@ public class EventListener implements Listener {
         }
         try {
             if (onJoinConfig.getBoolean("onJoin.firework.enable") && player.hasPermission("zlobby.lobby.effect")) {
-                logger.info(language.getString("sendingFireworks")+" ->" + event.getPlayer().getName());
+                logger.info(language.getString("sendingFireworks") + " ->" + event.getPlayer().getName());
                 final List<Map<?, ?>> fireworks = onJoinConfig.getMapList("onJoin.firework.fireworks");
                 new BukkitRunnable() {
                     @Override
@@ -277,7 +278,7 @@ public class EventListener implements Listener {
                                 DyeColor dyeColor = DyeColor.valueOf(colorStr.toUpperCase(Locale.ROOT));
                                 color = dyeColor.getColor();
                             } catch (IllegalArgumentException e) {
-                                logger.warning(language.getString("illegalConfig")+"Illegal color:" + colorStr);
+                                logger.warning(language.getString("illegalConfig") + "Illegal color:" + colorStr);
                                 continue; // skip this firework
                             }
 
@@ -314,7 +315,7 @@ public class EventListener implements Listener {
         if (!enable) {
             return;
         }
-        logger.info( event.getPlayer().getName() + language.getString("respawned"));
+        logger.info(event.getPlayer().getName() + language.getString("respawned"));
         try {
             if (config.getBoolean("teleportLocation.enable") && player.hasPermission("zlobby.lobby.tp")) {
 
@@ -377,7 +378,7 @@ public class EventListener implements Listener {
                     int tried_times = config.getInt("Lobby.tryTimes");
                     if (attemptCount >= tried_times) {
                         kickPlayer(player, language.getString("blockActionsCount") + tried_times);
-                        logger.warning( player.getName() + language.getString("kickedBecauseBreakTooManyTimes"));
+                        logger.warning(player.getName() + language.getString("kickedBecauseBreakTooManyTimes"));
 
                     }
                 }
@@ -407,11 +408,11 @@ public class EventListener implements Listener {
                     int tried_times = config.getInt("Lobby.tryTimes");
                     if (Debug) {
                         logger.info(language.getString("triedToPlaceBlock") + player.getName() + " -> " + attemptCount + " times.");
-                        logger.info(attemptCount+"/"+tried_times);
+                        logger.info(attemptCount + "/" + tried_times);
                     }
                     if (attemptCount >= tried_times) {
                         kickPlayer(player, language.getString("blockActionsCount") + tried_times + " times");
-                        logger.warning( player.getName() + language.getString("kickedBecausePlaceTooManyTimes"));
+                        logger.warning(player.getName() + language.getString("kickedBecausePlaceTooManyTimes"));
 
                     }
                 }
@@ -433,8 +434,8 @@ public class EventListener implements Listener {
         if (location.getY() < minHeight) {
             if (player.getGameMode() == GameMode.CREATIVE) return;
             if (config.getBoolean("teleportLocation.enable") && player.hasPermission("zlobby.lobby.tp")) {
-                logger.warning( player.getName() + language.getString("fellIntoTheVoid"));
-                player.sendMessage(ChatColor.GOLD+language.getString("playerWillBeTeleported"));
+                logger.warning(player.getName() + language.getString("fellIntoTheVoid"));
+                player.sendMessage(ChatColor.GOLD + language.getString("playerWillBeTeleported"));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
                 player.teleport(TPL);
             }

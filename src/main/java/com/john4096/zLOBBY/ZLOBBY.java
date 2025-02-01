@@ -35,6 +35,9 @@ public final class ZLOBBY extends JavaPlugin {
         final String version = this.version;
         saveDefaultConfig();
         reloadConfig();
+        this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
+        this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
+        this.config = getConfig();
         logger.info("""
                                              \033[31m
                                              \s
@@ -44,17 +47,11 @@ public final class ZLOBBY extends JavaPlugin {
                 `---'`---'`---'`---'`---'`---|
                                          `---'
                                          \033[0m""");
-        String path = "messages/messages_"+this.language;
-        this.Language = ResourceBundle.getBundle(path);
         logger.info(Language.getString("runningOn") + version);
         if (version.toLowerCase().contains("dev")) {
             logger.warning(Language.getString("devVersion"));
             logger.warning(Language.getString("latestBuild"));
         }
-
-        this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
-        this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
-        this.config = getConfig();
         Objects.requireNonNull(Bukkit.getPluginCommand("zlobby")).setExecutor(new Executor());
         Objects.requireNonNull(Bukkit.getPluginCommand("zlobby")).setTabCompleter(new CommandTabCompleter());
         eventListener = new EventListener();
@@ -94,6 +91,7 @@ public final class ZLOBBY extends JavaPlugin {
         }
         return this.worldSettingConfig;
     }
+
     public ResourceBundle getLanguage() {
         if (this.languageConfig == null) {
             reloadConfig();
@@ -117,14 +115,17 @@ public final class ZLOBBY extends JavaPlugin {
         this.onJoinConfig = YamlConfiguration.loadConfiguration(onJoinFile);
         this.worldSettingConfig = YamlConfiguration.loadConfiguration(worldSettingFile);
         this.languageConfig = YamlConfiguration.loadConfiguration(languageConfigFile);
-        switch (languageConfig.getString("language.lang")){
-            case("zh_CN")-> this.language = "zh_CN";
-            case ("en_US")-> this.language = "en_US";
-            case null, default -> {
-                logger.warning("Language config is illegal!");
-                logger.warning("Please check your lang.yml file!");
-            }
+        this.language = this.languageConfig.getString("language.lang");
+        String path = "messages/messages_" + this.language;
+        try {
+            ResourceBundle.getBundle(path);
+        } catch (Exception e) {
+            logger.warning("Language config is illegal!");
+            this.language = "en_US";
         }
+        path = "messages/messages_" + this.language;
+        this.Language = ResourceBundle.getBundle(path);
+
     }
 
 }

@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 public final class Executor implements CommandExecutor {
     YamlConfiguration onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
     ResourceBundle language = ZLOBBY.getPlugin(ZLOBBY.class).getLanguage();
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, @NotNull String[] args) {
         this.onJoinConfig = ZLOBBY.getPlugin(ZLOBBY.class).getOnJoinConfig();
